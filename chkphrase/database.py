@@ -3,8 +3,10 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 import chkphrase.conf as conf
 
-engineString = 'mysql://%s:%s@%s/%s' % (conf.db_user, conf.db_password,
-                                        conf.db_host, conf.db_database)
+engineString = 'mysql://%s:%s@%s/%s?charset=utf8' % (conf.db_user,
+                                                     conf.db_password,
+                                                     conf.db_host,
+                                                     conf.db_database)
 engine = create_engine(engineString,
                        convert_unicode=True,
                        pool_recycle=3600)

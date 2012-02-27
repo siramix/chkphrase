@@ -79,7 +79,7 @@ class Phrase(Base):
     __tablename__ = 'phrases'
     id = Column(Integer, primary_key=True)
     phrase = Column(Unicode(255), unique=True)
-    source = Column(Unicode(255), unique=True)
+    source = Column(Unicode(255))
     user_id = Column(Integer, ForeignKey('users.id'))
     pre_category_id = Column(Integer, ForeignKey('precategories.id'))
     genre_id = Column(Integer, ForeignKey('genres.id'))
@@ -88,7 +88,7 @@ class Phrase(Base):
     pack_id  = Column(Integer, ForeignKey('packs.id'))
     approved = Column(Integer, default=0)
 
-    genre = relationship('User', backref='users')
+    user = relationship('User', backref='users')
     pre_category = relationship('PreCategory', backref='precategories')
     genre = relationship('Genre', backref='genres')
     category = relationship('Category', backref='categories')
