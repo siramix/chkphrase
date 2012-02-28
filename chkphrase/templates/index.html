@@ -1,0 +1,142 @@
+<!doctype html>
+<html>
+  <head>
+    <title>ChkPhrase</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet"
+          href="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.css"
+          />
+    <link href="http://fonts.googleapis.com/css?family=Anton"
+          rel="stylesheet"
+          type="text/css"
+          />
+    <link href="http://fonts.googleapis.com/css?family=Francois+One"
+          rel="stylesheet"
+          type="text/css"
+          />
+    <link href="static/css/style.css" rel="stylesheet" />
+    <script src="http://code.jquery.com/jquery-1.6.4.min.js"></script>
+    <script src="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.js"></script>
+    <script src="static/js/chkphrase.js"></script>
+  </head>
+  <body>
+    <div data-role="page" id="main">
+      <div data-role="header">
+	<h1 class="title">Check Phrase</h1>
+      </div><!-- /header -->
+      <div data-role="content">
+        <ul data-role="listview" data-inset="true">
+	  <li><a href="#phrases">Approve Phrases</a></li>
+	  <li><a href="#users">Manage Users</a></li>
+	  <li><a href="#categories">Manage Categories</a></li>
+	  <li><a href="#precategories">Manage Pre-Categories</a></li>
+	  <li><a href="#genres">Manage Genres</a></li>
+	  <li><a href="#difficulties">Manage Difficulties</a></li>
+	  <li><a href="#packs">Manage Packs</a></li>
+	</ul>
+      </div><!-- /content -->
+    </div><!-- /page -->
+    <div data-role="page" id="phrases">
+      <div data-role="header">
+        <a href="#main" data-icon="home" data-iconpos="notext" data-direction="reverse" class="ui-btn-left jqm-home">Home</a>
+	<h1 class="title">Check Phrase</h1>
+      </div><!-- /header -->
+      <div data-role="content">
+        <p class="phrase">Never Say Die™</p>
+        <div data-role="fieldcontain">
+	  <label for="select-choice-1" class="select">Choose shipping method:</label>
+	  <select name="select-choice-1" id="select-choice-1">
+	    <option value="standard">Standard: 7 day</option>
+	    <option value="rush">Rush: 3 days</option>
+	    <option value="express">Express: next day</option>
+	    <option value="overnight">Overnight</option>
+	  </select>
+	</div>
+      </div><!-- /content -->
+    </div><!-- /page -->
+
+    <div data-role="page" id="users">
+      <div data-role="header">
+        <a href="#main"
+           data-icon="home"
+           data-iconpos="notext"
+           data-direction="reverse"
+           class="ui-btn-left jqm-home">Home</a>
+	<h1 class="title">Manage Users</h1>
+      </div><!-- /header -->
+      <div data-role="content">
+        <p class="phrase">Never Say User™</p>
+      </div><!-- /content -->
+    </div><!-- /page -->
+
+    <div data-role="page" id="categories">
+      <div data-role="header">
+        <a href="#main"
+           data-icon="home"
+           data-iconpos="notext"
+           data-direction="reverse"
+           class="ui-btn-left jqm-home">Home</a>
+	<h1 class="title">Manage Categories</h1>
+      </div><!-- /header -->
+      <div data-role="content">
+        <p class="phrase">Never Say Category™</p>
+      </div><!-- /content -->
+    </div><!-- /page -->
+
+    <div data-role="page" id="precategories">
+      <div data-role="header">
+        <a href="#main"
+           data-icon="home"
+           data-iconpos="notext"
+           data-direction="reverse"
+           class="ui-btn-left jqm-home">Home</a>
+	<h1 class="title">Manage Pre-Categories</h1>
+      </div><!-- /header -->
+      <div data-role="content">
+        <p class="phrase">Never Say Pre-Category™</p>
+      </div><!-- /content -->
+    </div><!-- /page -->
+
+    <div data-role="page" id="genres">
+      <div data-role="header">
+        <a href="#main"
+           data-icon="home"
+           data-iconpos="notext"
+           data-direction="reverse"
+           class="ui-btn-left jqm-home">Home</a>
+	<h1 class="title">Manage Genres</h1>
+      </div><!-- /header -->
+      <div data-role="content">
+        <p class="phrase">Never Say Genre™</p>
+      </div><!-- /content -->
+    </div><!-- /page -->
+
+    <div data-role="page" id="difficulties">
+      <div data-role="header">
+        <a href="#main"
+           data-icon="home"
+           data-iconpos="notext"
+           data-direction="reverse"
+           class="ui-btn-left jqm-home">Home</a>
+	<h1 class="title">Manage Difficulties</h1>
+      </div><!-- /header -->
+      <div data-role="content">
+        <p class="phrase">Never Say Difficulty™</p>
+      </div><!-- /content -->
+    </div><!-- /page -->
+
+    <div data-role="page" id="packs">
+      <div data-role="header">
+        <a href="#main"
+           data-icon="home"
+           data-iconpos="notext"
+           data-direction="reverse"
+           class="ui-btn-left jqm-home">Home</a>
+	<h1 class="title">Manage Packs</h1>
+      </div><!-- /header -->
+      <div data-role="content">
+        <p class="phrase">Never Say Pack™</p>
+      </div><!-- /content -->
+    </div><!-- /page -->
+  </body>
+</html>

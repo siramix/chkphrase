@@ -1,3 +1,7 @@
+"""
+The models module encapsulates the parameters data inherent in a large database
+of phrases.
+"""
 import hashlib
 from sqlalchemy import Column, Integer, String, Unicode, ForeignKey
 from sqlalchemy.orm import relationship, backref

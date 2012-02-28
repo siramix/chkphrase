@@ -1,3 +1,8 @@
+"""
+This module deals with authorizing users for access via HTTP simple
+authentication. When the password is received it is hashed using SHA-256 and
+compared against the hash in the database for that user.
+"""
 from functools import wraps
 import hashlib
 from flask import request, Response
@@ -6,9 +11,8 @@ import chkphrase.database as db
 
 
 def check_auth(username, password):
-    """This function is called to check if a username /
-    password combination is valid.
-    """
+    """This function is called to check if a username/password combination is
+    valid."""
     result = db.db_session.query(User).filter(User.name==username)
     if result.count() != 1:
         return False
