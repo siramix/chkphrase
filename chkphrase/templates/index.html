@@ -16,8 +16,8 @@
           />
     <link href="static/css/style.css" rel="stylesheet" />
     <script src="http://code.jquery.com/jquery-1.6.4.min.js"></script>
-    <script src="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.js"></script>
     <script src="static/js/chkphrase.js"></script>
+    <script src="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.js"></script>
   </head>
   <body>
     <div data-role="page" id="main">
@@ -34,6 +34,10 @@
 	  <li><a href="#difficulties">Manage Difficulties</a></li>
 	  <li><a href="#packs">Manage Packs</a></li>
 	</ul>
+        <div id="phrase_count">
+          <span>Total Phrases:</span>
+          <span id="phrase_count_value">0</span>
+        </div>
       </div><!-- /content -->
     </div><!-- /page -->
     <div data-role="page" id="phrases">
@@ -65,10 +69,65 @@
 	<h1 class="title">Manage Users</h1>
       </div><!-- /header -->
       <div data-role="content">
+        <div id="user_list" data-role="fieldcontain">
+        </div>
+        <div data-role="controlgroup" data-type="horizontal">
+          <a href="#user_dialog"
+             id="user_add_button"
+             data-role="button"
+             data-inline="true"
+             data-icon="plus"
+             data-rel="dialog">Add</a>
+          <a href="#user_dialog"
+             id="user_edit_button"
+             class="ui-disabled"
+             data-role="button"
+             data-inline="true"
+             data-icon="gear"
+             data-rel="dialog">Edit</a>
+          <a href="#users"
+             id="user_delete_button"
+             class="ui-disabled"
+             data-role="button"
+             data-inline="true"
+             data-icon="delete"
+             data-rel="dialog">Delete</a>
+        </div>
         <p class="phrase">Never Say User™</p>
       </div><!-- /content -->
     </div><!-- /page -->
 
+    <div data-role="page" id="user_dialog">
+      <div data-role="header">
+	<h1 class="title">User</h1>
+      </div><!-- /header -->
+      <div data-role="content">
+        <label for="user_name">Name:</label>
+        <input type="text" name="user_name" id="user_name" value=""
+        />
+        <label for="user_full_name">Full name:</label>
+        <input type="text" name="user_full_name" id="user_full_name" value=""
+        />
+        <label for="user_password">Password:</label>
+        <input type="password" name="user_password" id="user_password" value=""
+        />
+        <div data-role="controlgroup" data-type="horizontal">
+          <a href="#user"
+             id="user_edit_okay_button"
+             data-rel="back"
+             data-role="button"
+             data-inline="true"
+             data-icon="check">Okay</a>
+          <a href="#user"
+             data-rel="back"
+             data-role="button"
+             data-inline="true"
+             data-icon="delete">Cancel</a>
+        </div>
+      </div><!-- /content -->
+    </div><!-- /page -->
+
+<!-- Categories -------------------------------------------------------------->
     <div data-role="page" id="categories">
       <div data-role="header">
         <a href="#main"
@@ -79,10 +138,59 @@
 	<h1 class="title">Manage Categories</h1>
       </div><!-- /header -->
       <div data-role="content">
+        <div id="category_list" data-role="fieldcontain">
+        </div>
+        <div data-role="controlgroup" data-type="horizontal">
+          <a href="#category_dialog"
+             id="category_add_button"
+             data-role="button"
+             data-inline="true"
+             data-icon="plus"
+             data-rel="dialog">Add</a>
+          <a href="#category_dialog"
+             id="category_edit_button"
+             class="ui-disabled"
+             data-role="button"
+             data-inline="true"
+             data-icon="gear"
+             data-rel="dialog">Edit</a>
+          <a href="#categories"
+             id="category_delete_button"
+             class="ui-disabled"
+             data-role="button"
+             data-inline="true"
+             data-icon="delete"
+             data-rel="dialog">Delete</a>
+        </div>
         <p class="phrase">Never Say Category™</p>
       </div><!-- /content -->
     </div><!-- /page -->
 
+    <div data-role="page" id="category_dialog">
+      <div data-role="header">
+	<h1 class="title">Category</h1>
+      </div><!-- /header -->
+      <div data-role="content">
+        <label for="category_name">Name:</label>
+        <input type="text" name="category_name" id="category_name" value=""
+        />
+        <div data-role="controlgroup" data-type="horizontal">
+          <a href="#category"
+             id="category_edit_okay_button"
+             data-rel="back"
+             data-role="button"
+             data-inline="true"
+             data-icon="check">Okay</a>
+          <a href="#category"
+             data-rel="back"
+             data-role="button"
+             data-inline="true"
+             data-icon="delete">Cancel</a>
+        </div>
+      </div><!-- /content -->
+    </div><!-- /page -->
+
+<!-- Precategories ----------------------------------------------------------->
     <div data-role="page" id="precategories">
       <div data-role="header">
         <a href="#main"
@@ -90,10 +198,58 @@
            data-iconpos="notext"
            data-direction="reverse"
            class="ui-btn-left jqm-home">Home</a>
-	<h1 class="title">Manage Pre-Categories</h1>
+	<h1 class="title">Manage Precategories</h1>
       </div><!-- /header -->
       <div data-role="content">
-        <p class="phrase">Never Say Pre-Category™</p>
+        <div id="precategory_list" data-role="fieldcontain">
+        </div>
+        <div data-role="controlgroup" data-type="horizontal">
+          <a href="#precategory_dialog"
+             id="precategory_add_button"
+             data-role="button"
+             data-inline="true"
+             data-icon="plus"
+             data-rel="dialog">Add</a>
+          <a href="#precategory_dialog"
+             id="precategory_edit_button"
+             class="ui-disabled"
+             data-role="button"
+             data-inline="true"
+             data-icon="gear"
+             data-rel="dialog">Edit</a>
+          <a href="#precategories"
+             id="precategory_delete_button"
+             class="ui-disabled"
+             data-role="button"
+             data-inline="true"
+             data-icon="delete"
+             data-rel="dialog">Delete</a>
+        </div>
+        <p class="phrase">Never Say Precategory™</p>
+      </div><!-- /content -->
+    </div><!-- /page -->
+
+    <div data-role="page" id="precategory_dialog">
+      <div data-role="header">
+	<h1 class="title">Precategory</h1>
+      </div><!-- /header -->
+      <div data-role="content">
+        <label for="precategory_name">Name:</label>
+        <input type="text" name="precategory_name" id="precategory_name" value=""
+        />
+        <div data-role="controlgroup" data-type="horizontal">
+          <a href="#precategory"
+             id="precategory_edit_okay_button"
+             data-rel="back"
+             data-role="button"
+             data-inline="true"
+             data-icon="check">Okay</a>
+          <a href="#precategory"
+             data-rel="back"
+             data-role="button"
+             data-inline="true"
+             data-icon="delete">Cancel</a>
+        </div>
       </div><!-- /content -->
     </div><!-- /page -->
 
@@ -125,18 +281,5 @@
       </div><!-- /content -->
     </div><!-- /page -->
 
-    <div data-role="page" id="packs">
-      <div data-role="header">
-        <a href="#main"
-           data-icon="home"
-           data-iconpos="notext"
-           data-direction="reverse"
-           class="ui-btn-left jqm-home">Home</a>
-	<h1 class="title">Manage Packs</h1>
-      </div><!-- /header -->
-      <div data-role="content">
-        <p class="phrase">Never Say Pack™</p>
-      </div><!-- /content -->
-    </div><!-- /page -->
   </body>
 </html>

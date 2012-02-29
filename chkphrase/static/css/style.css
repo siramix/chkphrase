@@ -1,10 +1,18 @@
 h1.title {
     font-family: 'Anton', Arial, serif;
-    font-weight: 400; 
+    font-weight: 400;
     font-size: 20px !important;
     margin: 4px !important;
 }
 
 p.phrase {
     font-family: 'Francois One', sans-serif;
+}
+
+div#phrase_count {
+    font-family: 'Anton', Arial, serif;
+    font-weight: 400;
+    font-size: 20px !important;
+    margin: 4px !important;
+    text-align: center;
 }
