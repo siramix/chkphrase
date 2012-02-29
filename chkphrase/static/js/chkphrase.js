@@ -211,6 +211,159 @@ chkphrase.precategories.dialogshow = function () {
     });
 };
 
+// Genres --------------------------------------------------------------
+chkphrase.genres = chkphrase.genres || {};
+chkphrase.genres.data = chkphrase.genres.data || {};
+
+/**
+ * Load the phrase count each time the home screen is visited.
+ */
+chkphrase.genres.pageshow = function () {
+    'use strict';
+    $.getJSON('genres', function (data) {
+        chkphrase.listToChooser(data, $('#genre_list'));
+        $('#genre_list input').unbind('change').change(function () {
+            $('#genres .ui-disabled').removeClass('ui-disabled');
+            chkphrase.genres.data.selectedId = $(this).val();
+        });
+        $('#genre_delete_button').unbind('click').click(function () {
+            $.post('genres/delete/' + chkphrase.genres.data.selectedId,
+                      function (data) {
+                    $('#genre_edit_button').addClass('ui-disabled');
+                    $('#genre_delete_button').addClass('ui-disabled');
+                    chkphrase.genres.pageshow();
+                });
+        });
+        $('#genre_add_button').unbind('click').click(function () {
+            chkphrase.genres.data.selectedId = null;
+            $('#genre_name').val('');
+        });
+    });
+};
+
+chkphrase.genres.dialogshow = function () {
+    'use strict';
+    if (chkphrase.genres.data.selectedId !== null) {
+        $.getJSON('genres/' + chkphrase.genres.data.selectedId,
+                  function (data) {
+                $('#genre_name').val(data.name);
+            });
+    }
+    $('#genre_edit_okay_button').unbind('click').click(function () {
+        var params = {};
+        params.name = $('#genre_name').val();
+        if (chkphrase.genres.data.selectedId !== null) {
+            $.post('genres/edit/' + chkphrase.genres.data.selectedId,
+                   params,
+                   function (data) {});
+        } else {
+            $.post('genres/add', params, function (data) {});
+        }
+    });
+};
+
+// Difficulties --------------------------------------------------------------
+chkphrase.difficulties = chkphrase.difficulties || {};
+chkphrase.difficulties.data = chkphrase.difficulties.data || {};
+
+/**
+ * Load the phrase count each time the home screen is visited.
+ */
+chkphrase.difficulties.pageshow = function () {
+    'use strict';
+    $.getJSON('difficulties', function (data) {
+        chkphrase.listToChooser(data, $('#difficulty_list'));
+        $('#difficulty_list input').unbind('change').change(function () {
+            $('#difficulties .ui-disabled').removeClass('ui-disabled');
+            chkphrase.difficulties.data.selectedId = $(this).val();
+        });
+        $('#difficulty_delete_button').unbind('click').click(function () {
+            $.post('difficulties/delete/' + chkphrase.difficulties.data.selectedId,
+                      function (data) {
+                    $('#difficulty_edit_button').addClass('ui-disabled');
+                    $('#difficulty_delete_button').addClass('ui-disabled');
+                    chkphrase.difficulties.pageshow();
+                });
+        });
+        $('#difficulty_add_button').unbind('click').click(function () {
+            chkphrase.difficulties.data.selectedId = null;
+            $('#difficulty_name').val('');
+        });
+    });
+};
+
+chkphrase.difficulties.dialogshow = function () {
+    'use strict';
+    if (chkphrase.difficulties.data.selectedId !== null) {
+        $.getJSON('difficulties/' + chkphrase.difficulties.data.selectedId,
+                  function (data) {
+                $('#difficulty_name').val(data.name);
+            });
+    }
+    $('#difficulty_edit_okay_button').unbind('click').click(function () {
+        var params = {};
+        params.name = $('#difficulty_name').val();
+        if (chkphrase.difficulties.data.selectedId !== null) {
+            $.post('difficulties/edit/' + chkphrase.difficulties.data.selectedId,
+                   params,
+                   function (data) {});
+        } else {
+            $.post('difficulties/add', params, function (data) {});
+        }
+    });
+};
+
+// Packs --------------------------------------------------------------
+chkphrase.packs = chkphrase.packs || {};
+chkphrase.packs.data = chkphrase.packs.data || {};
+
+/**
+ * Load the phrase count each time the home screen is visited.
+ */
+chkphrase.packs.pageshow = function () {
+    'use strict';
+    $.getJSON('packs', function (data) {
+        chkphrase.listToChooser(data, $('#pack_list'));
+        $('#pack_list input').unbind('change').change(function () {
+            $('#packs .ui-disabled').removeClass('ui-disabled');
+            chkphrase.packs.data.selectedId = $(this).val();
+        });
+        $('#pack_delete_button').unbind('click').click(function () {
+            $.post('packs/delete/' + chkphrase.packs.data.selectedId,
+                      function (data) {
+                    $('#pack_edit_button').addClass('ui-disabled');
+                    $('#pack_delete_button').addClass('ui-disabled');
+                    chkphrase.packs.pageshow();
+                });
+        });
+        $('#pack_add_button').unbind('click').click(function () {
+            chkphrase.packs.data.selectedId = null;
+            $('#pack_name').val('');
+        });
+    });
+};
+
+chkphrase.packs.dialogshow = function () {
+    'use strict';
+    if (chkphrase.packs.data.selectedId !== null) {
+        $.getJSON('packs/' + chkphrase.packs.data.selectedId,
+                  function (data) {
+                $('#pack_name').val(data.name);
+            });
+    }
+    $('#pack_edit_okay_button').unbind('click').click(function () {
+        var params = {};
+        params.name = $('#pack_name').val();
+        if (chkphrase.packs.data.selectedId !== null) {
+            $.post('packs/edit/' + chkphrase.packs.data.selectedId,
+                   params,
+                   function (data) {});
+        } else {
+            $.post('packs/add', params, function (data) {});
+        }
+    });
+};
+
 $(document).bind('mobileinit', function () {
     'use strict';
     $('#main').live('pageshow', chkphrase.main.pageshow);
@@ -225,12 +378,12 @@ $(document).bind('mobileinit', function () {
     $('#precategory_dialog').live('pageshow',
                                   chkphrase.precategories.dialogshow);
 
-/**    $('#genres').live('pageshow', chkphrase.genres.pageshow);
+    $('#genres').live('pageshow', chkphrase.genres.pageshow);
     $('#genre_dialog').live('pageshow', chkphrase.genres.dialogshow);
 
     $('#difficulties').live('pageshow', chkphrase.difficulties.pageshow);
     $('#difficulty_dialog').live('pageshow', chkphrase.difficulties.dialogshow);
 
     $('#packs').live('pageshow', chkphrase.packs.pageshow);
-    $('#pack_dialog').live('pageshow', chkphrase.packs.dialogshow);**/
+    $('#pack_dialog').live('pageshow', chkphrase.packs.dialogshow);
 });

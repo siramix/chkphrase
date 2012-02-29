@@ -253,6 +253,7 @@
       </div><!-- /content -->
     </div><!-- /page -->
 
+<!-- Genres ------------------------------------------------------------------>
     <div data-role="page" id="genres">
       <div data-role="header">
         <a href="#main"
@@ -263,10 +264,59 @@
 	<h1 class="title">Manage Genres</h1>
       </div><!-- /header -->
       <div data-role="content">
+        <div id="genre_list" data-role="fieldcontain">
+        </div>
+        <div data-role="controlgroup" data-type="horizontal">
+          <a href="#genre_dialog"
+             id="genre_add_button"
+             data-role="button"
+             data-inline="true"
+             data-icon="plus"
+             data-rel="dialog">Add</a>
+          <a href="#genre_dialog"
+             id="genre_edit_button"
+             class="ui-disabled"
+             data-role="button"
+             data-inline="true"
+             data-icon="gear"
+             data-rel="dialog">Edit</a>
+          <a href="#genres"
+             id="genre_delete_button"
+             class="ui-disabled"
+             data-role="button"
+             data-inline="true"
+             data-icon="delete"
+             data-rel="dialog">Delete</a>
+        </div>
         <p class="phrase">Never Say Genre™</p>
       </div><!-- /content -->
     </div><!-- /page -->
 
+    <div data-role="page" id="genre_dialog">
+      <div data-role="header">
+	<h1 class="title">Genre</h1>
+      </div><!-- /header -->
+      <div data-role="content">
+        <label for="genre_name">Name:</label>
+        <input type="text" name="genre_name" id="genre_name" value=""
+        />
+        <div data-role="controlgroup" data-type="horizontal">
+          <a href="#genre"
+             id="genre_edit_okay_button"
+             data-rel="back"
+             data-role="button"
+             data-inline="true"
+             data-icon="check">Okay</a>
+          <a href="#genre"
+             data-rel="back"
+             data-role="button"
+             data-inline="true"
+             data-icon="delete">Cancel</a>
+        </div>
+      </div><!-- /content -->
+    </div><!-- /page -->
+
+<!-- Difficulties ------------------------------------------------------------>
     <div data-role="page" id="difficulties">
       <div data-role="header">
         <a href="#main"
@@ -277,7 +327,118 @@
 	<h1 class="title">Manage Difficulties</h1>
       </div><!-- /header -->
       <div data-role="content">
+        <div id="difficulty_list" data-role="fieldcontain">
+        </div>
+        <div data-role="controlgroup" data-type="horizontal">
+          <a href="#difficulty_dialog"
+             id="difficulty_add_button"
+             data-role="button"
+             data-inline="true"
+             data-icon="plus"
+             data-rel="dialog">Add</a>
+          <a href="#difficulty_dialog"
+             id="difficulty_edit_button"
+             class="ui-disabled"
+             data-role="button"
+             data-inline="true"
+             data-icon="gear"
+             data-rel="dialog">Edit</a>
+          <a href="#difficulties"
+             id="difficulty_delete_button"
+             class="ui-disabled"
+             data-role="button"
+             data-inline="true"
+             data-icon="delete"
+             data-rel="dialog">Delete</a>
+        </div>
         <p class="phrase">Never Say Difficulty™</p>
+      </div><!-- /content -->
+    </div><!-- /page -->
+
+    <div data-role="page" id="genre_dialog">
+      <div data-role="header">
+	<h1 class="title">Genre</h1>
+      </div><!-- /header -->
+      <div data-role="content">
+        <label for="genre_name">Name:</label>
+        <input type="text" name="genre_name" id="genre_name" value=""
+        />
+        <div data-role="controlgroup" data-type="horizontal">
+          <a href="#genre"
+             id="genre_edit_okay_button"
+             data-rel="back"
+             data-role="button"
+             data-inline="true"
+             data-icon="check">Okay</a>
+          <a href="#genre"
+             data-rel="back"
+             data-role="button"
+             data-inline="true"
+             data-icon="delete">Cancel</a>
+        </div>
+      </div><!-- /content -->
+    </div><!-- /page -->
+
+<!-- Packs ------------------------------------------------------------------>
+    <div data-role="page" id="packs">
+      <div data-role="header">
+        <a href="#main"
+           data-icon="home"
+           data-iconpos="notext"
+           data-direction="reverse"
+           class="ui-btn-left jqm-home">Home</a>
+	<h1 class="title">Manage Packs</h1>
+      </div><!-- /header -->
+      <div data-role="content">
+        <div id="pack_list" data-role="fieldcontain">
+        </div>
+        <div data-role="controlgroup" data-type="horizontal">
+          <a href="#pack_dialog"
+             id="pack_add_button"
+             data-role="button"
+             data-inline="true"
+             data-icon="plus"
+             data-rel="dialog">Add</a>
+          <a href="#pack_dialog"
+             id="pack_edit_button"
+             class="ui-disabled"
+             data-role="button"
+             data-inline="true"
+             data-icon="gear"
+             data-rel="dialog">Edit</a>
+          <a href="#packs"
+             id="pack_delete_button"
+             class="ui-disabled"
+             data-role="button"
+             data-inline="true"
+             data-icon="delete"
+             data-rel="dialog">Delete</a>
+        </div>
+        <p class="phrase">Never Say Pack™</p>
+      </div><!-- /content -->
+    </div><!-- /page -->
+
+    <div data-role="page" id="pack_dialog">
+      <div data-role="header">
+	<h1 class="title">Pack</h1>
+      </div><!-- /header -->
+      <div data-role="content">
+        <label for="pack_name">Name:</label>
+        <input type="text" name="pack_name" id="pack_name" value=""
+        />
+        <div data-role="controlgroup" data-type="horizontal">
+          <a href="#pack"
+             id="pack_edit_okay_button"
+             data-rel="back"
+             data-role="button"
+             data-inline="true"
+             data-icon="check">Okay</a>
+          <a href="#pack"
+             data-rel="back"
+             data-role="button"
+             data-inline="true"
+             data-icon="delete">Cancel</a>
+        </div>
       </div><!-- /content -->
     </div><!-- /page -->
 
