@@ -16,11 +16,12 @@ one.
 """
 from chkphrase import app
 from chkphrase import auth
+from chkphrase import conf
 import chkphrase.database as db
 from chkphrase.models import User, Category, PreCategory, Genre, Difficulty, Pack, Phrase
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.sql.expression import func
-from flask import Flask, request, jsonify, abort, render_template, redirect
+from flask import Flask, request, jsonify, abort, render_template, redirect, make_response
 import hashlib
 
 @app.route('/')
@@ -29,6 +30,23 @@ def index():
     """Render the index page."""
     cur_user = request.authorization.username
     return render_template('index.html', user=cur_user)
+
+@app.route('/css/style.css')
+def css():
+    """Render the stylesheet."""
+    ret = make_response()
+    ret.mimetype = 'text/css'
+    ret.data = render_template('style.css')
+    return ret
+
+@app.route('/js/chkphrase.js')
+def js():
+    """Render the javascript with the application root."""
+    ret = make_response()
+    ret.mimetype = 'application/javascript'
+    ret.data = render_template('chkphrase.js', app_root=conf.app_root)    
+    return ret
+    
 
 @app.route('/users')
 @auth.requires_auth

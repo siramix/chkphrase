@@ -47,7 +47,7 @@ chkphrase.main = chkphrase.main || {};
  */
 chkphrase.main.pageshow = function () {
     'use strict';
-    $.getJSON('phrases/count', function (data) {
+    $.getJSON('{{app_root}}/phrases/count', function (data) {
         $('#phrase_count_value').html(data.count);
     });
 };
@@ -60,7 +60,7 @@ chkphrase.phrases = chkphrase.phrases || {};
  */
 chkphrase.phrases.pageshow = function () {
     'use strict';
-    $.getJSON('phrases/random/unapproved', function (data) {
+    $.getJSON('{{app_root}}/phrases/random/unapproved', function (data) {
         $('#cur_phrase').html(data.phrase);
     });
 };
@@ -74,14 +74,14 @@ chkphrase.users.data = chkphrase.users.data || {};
  */
 chkphrase.users.pageshow = function () {
     'use strict';
-    $.getJSON('users', function (data) {
+    $.getJSON('{{app_root}}/users', function (data) {
         chkphrase.listToChooser(data, $('#user_list'));
         $('#user_list input').unbind('change').change(function () {
             $('#users .ui-disabled').removeClass('ui-disabled');
             chkphrase.users.data.selectedId = $(this).val();
         });
         $('#user_delete_button').unbind('click').click(function () {
-            $.post('users/delete/' + chkphrase.users.data.selectedId,
+            $.post('{{app_root}}/users/delete/' + chkphrase.users.data.selectedId,
                       function (data) {
                     $('#user_edit_button').addClass('ui-disabled');
                     $('#user_delete_button').addClass('ui-disabled');
@@ -100,7 +100,7 @@ chkphrase.users.pageshow = function () {
 chkphrase.users.dialogshow = function () {
     'use strict';
     if (chkphrase.users.data.selectedId !== null) {
-        $.getJSON('users/' + chkphrase.users.data.selectedId,
+        $.getJSON('{{app_root}}/users/' + chkphrase.users.data.selectedId,
                   function (data) {
                 $('#user_name').val(data.name);
                 $('#user_full_name').val(data.full_name);
@@ -112,11 +112,11 @@ chkphrase.users.dialogshow = function () {
         params.full_name = $('#user_full_name').val();
         params.password = $('#user_password').val();
         if (chkphrase.users.data.selectedId !== null) {
-            $.post('users/edit/' + chkphrase.users.data.selectedId,
+            $.post('{{app_root}}/users/edit/' + chkphrase.users.data.selectedId,
                    params,
                    function (data) {});
         } else {
-            $.post('users/add', params, function (data) {});
+            $.post('{{app_root}}/users/add', params, function (data) {});
         }
     });
 };
@@ -130,14 +130,14 @@ chkphrase.categories.data = chkphrase.categories.data || {};
  */
 chkphrase.categories.pageshow = function () {
     'use strict';
-    $.getJSON('categories', function (data) {
+    $.getJSON('{{app_root}}/categories', function (data) {
         chkphrase.listToChooser(data, $('#category_list'));
         $('#category_list input').unbind('change').change(function () {
             $('#categories .ui-disabled').removeClass('ui-disabled');
             chkphrase.categories.data.selectedId = $(this).val();
         });
         $('#category_delete_button').unbind('click').click(function () {
-            $.post('categories/delete/' + chkphrase.categories.data.selectedId,
+            $.post('{{app_root}}/categories/delete/' + chkphrase.categories.data.selectedId,
                       function (data) {
                     $('#category_edit_button').addClass('ui-disabled');
                     $('#category_delete_button').addClass('ui-disabled');
@@ -154,7 +154,7 @@ chkphrase.categories.pageshow = function () {
 chkphrase.categories.dialogshow = function () {
     'use strict';
     if (chkphrase.categories.data.selectedId !== null) {
-        $.getJSON('categories/' + chkphrase.categories.data.selectedId,
+        $.getJSON('{{app_root}}/categories/' + chkphrase.categories.data.selectedId,
                   function (data) {
                 $('#category_name').val(data.name);
             });
@@ -163,11 +163,11 @@ chkphrase.categories.dialogshow = function () {
         var params = {};
         params.name = $('#category_name').val();
         if (chkphrase.categories.data.selectedId !== null) {
-            $.post('categories/edit/' + chkphrase.categories.data.selectedId,
+            $.post('{{app_root}}/categories/edit/' + chkphrase.categories.data.selectedId,
                    params,
                    function (data) {});
         } else {
-            $.post('categories/add', params, function (data) {});
+            $.post('{{app_root}}/categories/add', params, function (data) {});
         }
     });
 };
@@ -181,14 +181,14 @@ chkphrase.precategories.data = chkphrase.precategories.data || {};
  */
 chkphrase.precategories.pageshow = function () {
     'use strict';
-    $.getJSON('precategories', function (data) {
+    $.getJSON('{{app_root}}/precategories', function (data) {
         chkphrase.listToChooser(data, $('#precategory_list'));
         $('#precategory_list input').unbind('change').change(function () {
             $('#precategories .ui-disabled').removeClass('ui-disabled');
             chkphrase.precategories.data.selectedId = $(this).val();
         });
         $('#precategory_delete_button').unbind('click').click(function () {
-            $.post('precategories/delete/' + chkphrase.precategories.data.selectedId,
+            $.post('{{app_root}}/precategories/delete/' + chkphrase.precategories.data.selectedId,
                       function (data) {
                     $('#precategory_edit_button').addClass('ui-disabled');
                     $('#precategory_delete_button').addClass('ui-disabled');
@@ -205,7 +205,7 @@ chkphrase.precategories.pageshow = function () {
 chkphrase.precategories.dialogshow = function () {
     'use strict';
     if (chkphrase.precategories.data.selectedId !== null) {
-        $.getJSON('precategories/' + chkphrase.precategories.data.selectedId,
+        $.getJSON('{{app_root}}/precategories/' + chkphrase.precategories.data.selectedId,
                   function (data) {
                 $('#precategory_name').val(data.name);
             });
@@ -214,11 +214,11 @@ chkphrase.precategories.dialogshow = function () {
         var params = {};
         params.name = $('#precategory_name').val();
         if (chkphrase.precategories.data.selectedId !== null) {
-            $.post('precategories/edit/' + chkphrase.precategories.data.selectedId,
+            $.post('{{app_root}}/precategories/edit/' + chkphrase.precategories.data.selectedId,
                    params,
                    function (data) {});
         } else {
-            $.post('precategories/add', params, function (data) {});
+            $.post('{{app_root}}/precategories/add', params, function (data) {});
         }
     });
 };
@@ -232,14 +232,14 @@ chkphrase.genres.data = chkphrase.genres.data || {};
  */
 chkphrase.genres.pageshow = function () {
     'use strict';
-    $.getJSON('genres', function (data) {
+    $.getJSON('{{app_root}}/genres', function (data) {
         chkphrase.listToChooser(data, $('#genre_list'));
         $('#genre_list input').unbind('change').change(function () {
             $('#genres .ui-disabled').removeClass('ui-disabled');
             chkphrase.genres.data.selectedId = $(this).val();
         });
         $('#genre_delete_button').unbind('click').click(function () {
-            $.post('genres/delete/' + chkphrase.genres.data.selectedId,
+            $.post('{{app_root}}/genres/delete/' + chkphrase.genres.data.selectedId,
                       function (data) {
                     $('#genre_edit_button').addClass('ui-disabled');
                     $('#genre_delete_button').addClass('ui-disabled');
@@ -256,7 +256,7 @@ chkphrase.genres.pageshow = function () {
 chkphrase.genres.dialogshow = function () {
     'use strict';
     if (chkphrase.genres.data.selectedId !== null) {
-        $.getJSON('genres/' + chkphrase.genres.data.selectedId,
+        $.getJSON('{{app_root}}/genres/' + chkphrase.genres.data.selectedId,
                   function (data) {
                 $('#genre_name').val(data.name);
             });
@@ -265,11 +265,11 @@ chkphrase.genres.dialogshow = function () {
         var params = {};
         params.name = $('#genre_name').val();
         if (chkphrase.genres.data.selectedId !== null) {
-            $.post('genres/edit/' + chkphrase.genres.data.selectedId,
+            $.post('{{app_root}}/genres/edit/' + chkphrase.genres.data.selectedId,
                    params,
                    function (data) {});
         } else {
-            $.post('genres/add', params, function (data) {});
+            $.post('{{app_root}}/genres/add', params, function (data) {});
         }
     });
 };
@@ -283,14 +283,14 @@ chkphrase.difficulties.data = chkphrase.difficulties.data || {};
  */
 chkphrase.difficulties.pageshow = function () {
     'use strict';
-    $.getJSON('difficulties', function (data) {
+    $.getJSON('{{app_root}}/difficulties', function (data) {
         chkphrase.listToChooser(data, $('#difficulty_list'));
         $('#difficulty_list input').unbind('change').change(function () {
             $('#difficulties .ui-disabled').removeClass('ui-disabled');
             chkphrase.difficulties.data.selectedId = $(this).val();
         });
         $('#difficulty_delete_button').unbind('click').click(function () {
-            $.post('difficulties/delete/' + chkphrase.difficulties.data.selectedId,
+            $.post('{{app_root}}/difficulties/delete/' + chkphrase.difficulties.data.selectedId,
                       function (data) {
                     $('#difficulty_edit_button').addClass('ui-disabled');
                     $('#difficulty_delete_button').addClass('ui-disabled');
@@ -307,7 +307,7 @@ chkphrase.difficulties.pageshow = function () {
 chkphrase.difficulties.dialogshow = function () {
     'use strict';
     if (chkphrase.difficulties.data.selectedId !== null) {
-        $.getJSON('difficulties/' + chkphrase.difficulties.data.selectedId,
+        $.getJSON('{{app_root}}/difficulties/' + chkphrase.difficulties.data.selectedId,
                   function (data) {
                 $('#difficulty_name').val(data.name);
             });
@@ -316,11 +316,11 @@ chkphrase.difficulties.dialogshow = function () {
         var params = {};
         params.name = $('#difficulty_name').val();
         if (chkphrase.difficulties.data.selectedId !== null) {
-            $.post('difficulties/edit/' + chkphrase.difficulties.data.selectedId,
+            $.post('{{app_root}}/difficulties/edit/' + chkphrase.difficulties.data.selectedId,
                    params,
                    function (data) {});
         } else {
-            $.post('difficulties/add', params, function (data) {});
+            $.post('{{app_root}}/difficulties/add', params, function (data) {});
         }
     });
 };
@@ -334,14 +334,14 @@ chkphrase.packs.data = chkphrase.packs.data || {};
  */
 chkphrase.packs.pageshow = function () {
     'use strict';
-    $.getJSON('packs', function (data) {
+    $.getJSON('{{app_root}}/packs', function (data) {
         chkphrase.listToChooser(data, $('#pack_list'));
         $('#pack_list input').unbind('change').change(function () {
             $('#packs .ui-disabled').removeClass('ui-disabled');
             chkphrase.packs.data.selectedId = $(this).val();
         });
         $('#pack_delete_button').unbind('click').click(function () {
-            $.post('packs/delete/' + chkphrase.packs.data.selectedId,
+            $.post('{{app_root}}/packs/delete/' + chkphrase.packs.data.selectedId,
                       function (data) {
                     $('#pack_edit_button').addClass('ui-disabled');
                     $('#pack_delete_button').addClass('ui-disabled');
@@ -358,7 +358,7 @@ chkphrase.packs.pageshow = function () {
 chkphrase.packs.dialogshow = function () {
     'use strict';
     if (chkphrase.packs.data.selectedId !== null) {
-        $.getJSON('packs/' + chkphrase.packs.data.selectedId,
+        $.getJSON('{{app_root}}/packs/' + chkphrase.packs.data.selectedId,
                   function (data) {
                 $('#pack_name').val(data.name);
             });
@@ -367,11 +367,11 @@ chkphrase.packs.dialogshow = function () {
         var params = {};
         params.name = $('#pack_name').val();
         if (chkphrase.packs.data.selectedId !== null) {
-            $.post('packs/edit/' + chkphrase.packs.data.selectedId,
+            $.post('{{app_root}}/packs/edit/' + chkphrase.packs.data.selectedId,
                    params,
                    function (data) {});
         } else {
-            $.post('packs/add', params, function (data) {});
+            $.post('{{app_root}}/packs/add', params, function (data) {});
         }
     });
 };
