@@ -19,7 +19,8 @@ from chkphrase import auth
 import chkphrase.database as db
 from chkphrase.models import User, Category, PreCategory, Genre, Difficulty, Pack, Phrase
 from sqlalchemy.exc import IntegrityError
-from flask import Flask, request, jsonify, abort, render_template
+from sqlalchemy.sql.expression import func
+from flask import Flask, request, jsonify, abort, render_template, redirect
 import hashlib
 
 @app.route('/')
@@ -641,3 +642,14 @@ def count_phrases():
     """Count all of the phrases in the database."""
     count = db.db_session.query(Phrase).count()
     return jsonify(count=count)
+
+@app.route('/phrases/random/unapproved')
+@auth.requires_auth
+def random_phrase():
+    """Redirect to a random phrase."""
+    query = db.db_session.query(Phrase).filter(Phrase.approved==0).order_by(func.random()).limit(1)
+    try:
+        cur_phrase = query[0]
+    except IndexError:
+        abort(404)
+    return redirect("/phrases/%d" % cur_phrase.id, 301)

@@ -7,6 +7,7 @@ h1.title {
 
 p.phrase {
     font-family: 'Francois One', sans-serif;
+    font-size: 30px;
 }
 
 div#phrase_count {

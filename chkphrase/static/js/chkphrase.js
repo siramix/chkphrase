@@ -9,7 +9,6 @@
 
 // Namespaces
 var $ = $ || {};
-var document = document || {};
 var chkphrase = chkphrase || {};
 
 // General --------------------------------------------------------------------
@@ -50,6 +49,19 @@ chkphrase.main.pageshow = function () {
     'use strict';
     $.getJSON('phrases/count', function (data) {
         $('#phrase_count_value').html(data.count);
+    });
+};
+
+// Main -----------------------------------------------------------------------
+chkphrase.phrases = chkphrase.phrases || {};
+
+/**
+ * Load the phrase count each time the home screen is visited.
+ */
+chkphrase.phrases.pageshow = function () {
+    'use strict';
+    $.getJSON('phrases/random/unapproved', function (data) {
+        $('#cur_phrase').html(data.phrase);
     });
 };
 
@@ -367,6 +379,8 @@ chkphrase.packs.dialogshow = function () {
 $(document).bind('mobileinit', function () {
     'use strict';
     $('#main').live('pageshow', chkphrase.main.pageshow);
+
+    $('#phrases').live('pageshow', chkphrase.phrases.pageshow);
 
     $('#users').live('pageshow', chkphrase.users.pageshow);
     $('#user_dialog').live('pageshow', chkphrase.users.dialogshow);

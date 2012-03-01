@@ -1,8 +1,7 @@
 """
 This module deals with authorizing users for access via HTTP simple
 authentication. When the password is received it is hashed using SHA-256 and
-compared against the hash in the database for that user.
-"""
+compared against the hash in the database for that user."""
 from functools import wraps
 import hashlib
 from flask import request, Response

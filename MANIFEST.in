@@ -1,0 +1,2 @@
+recursive-include chkphrase/templates *
+recursive-include chkphrase/static *
