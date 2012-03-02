@@ -29,7 +29,7 @@ import hashlib
 def index():
     """Render the index page."""
     cur_user = request.authorization.username
-    return render_template('index.html', user=cur_user)
+    return render_template('index.html', user=cur_user, app_root=conf.app_root)
 
 @app.route('/css/style.css')
 def css():
