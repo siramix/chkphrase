@@ -2,9 +2,10 @@
 <html>
   <head>
     <title>Check Phrase</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet"
-          href="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.css"
+    <meta name="viewport" content="width=device-width,
+                                   initial-scale=1">
+    <link rel="stylesheet" 
+          href="http://code.jquery.com/mobile/1.1.0-rc.1/jquery.mobile-1.1.0-rc.1.min.css" 
           />
     <link href="http://fonts.googleapis.com/css?family=Anton"
           rel="stylesheet"
@@ -15,9 +16,9 @@
           type="text/css"
           />
     <link href="{{app_root}}/css/style.css" rel="stylesheet" />
-    <script src="http://code.jquery.com/jquery-1.6.4.min.js"></script>
+    <script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
     <script src="{{app_root}}/js/chkphrase.js"></script>
-    <script src="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.js"></script>
+    <script src="http://code.jquery.com/mobile/1.1.0-rc.1/jquery.mobile-1.1.0-rc.1.min.js"></script>
   </head>
   <body>
     <div data-role="page" id="main">
@@ -35,8 +36,22 @@
 	  <li><a href="#packs">Manage Packs</a></li>
 	</ul>
         <div id="phrase_count">
-          <span>Total Phrases:</span>
-          <span id="phrase_count_value">0</span>
+          <span class="count_container">
+            <span>Total:</span>
+            <span id="phrase_count_value">0</span>
+          </span>
+          <span class="count_container">
+            <span>Approved:</span>
+            <span id="phrase_approved_count">0</span>
+          </span>
+          <span class="count_container">
+            <span>Rejected:</span>
+            <span id="phrase_rejected_count">0</span>
+          </span>
+          <span class="count_container">
+            <span>Unseen:</span>
+            <span id="phrase_unseen_count">0</span>
+          </span>
         </div>
       </div><!-- /content -->
     </div><!-- /page -->
@@ -51,30 +66,45 @@
 	<h1 class="title">Check Phrase</h1>
       </div><!-- /header -->
       <div data-role="content">
-        <p id="cur_phrase" class="phrase"></p>
+        <div id="cur_phrase" class="phrase"></div>
         <div data-role="fieldcontain" data-type="horizontal">
           <a href="#phrases"
              id="phrase_approve_button"
-             class="g"
              data-role="button"
              data-inline="true"
              data-icon="plus"
              data-rel="dialog">Approve</a>
           <a href="#phrases"
              id="phrase_reject_button"
-             class="r"
              data-role="button"
              data-inline="true"
              data-icon="delete"
              data-rel="dialog">Reject</a>
+          <a href="#phrases"
+             id="phrase_edit_button"
+             data-role="button"
+             data-inline="true"
+             data-icon="gear"
+             data-rel="dialog">Edit</a>
         </div>
+        <div id="precategory"></div>
+        <div class="chooser_label">Source:<span id="phrase_source"></span></div>
         <div data-role="fieldcontain">
-	  <label for="select-choice-1" class="select">Choose shipping method:</label>
-	  <select name="select-choice-1" id="select-choice-1">
-	    <option value="standard">Standard: 7 day</option>
-	    <option value="rush">Rush: 3 days</option>
-	    <option value="express">Express: next day</option>
-	    <option value="overnight">Overnight</option>
+          <div class="chooser_label">Category:</div>
+	  <select name="category" id="phrase_category_chooser">
+            <option value="null">None Selected</option>
+	  </select>
+          <div class="chooser_label">Genre:</div>
+	  <select name="genre" id="phrase_genre_chooser">
+            <option value="null">None Selected</option>
+	  </select>
+          <div class="chooser_label">Difficulty:</div>
+	  <select name="difficulty" id="phrase_difficulty_chooser">
+            <option value="null">None Selected</option>
+	  </select>
+          <div class="chooser_label">Pack:</div>
+	  <select name="pack" id="phrase_pack_chooser">
+            <option value="null">None Selected</option>
 	  </select>
 	</div>
       </div><!-- /content -->
@@ -115,7 +145,6 @@
              data-icon="delete"
              data-rel="dialog">Delete</a>
         </div>
-        <p class="phrase">Never Say User™</p>
       </div><!-- /content -->
     </div><!-- /page -->
 
@@ -184,7 +213,6 @@
              data-icon="delete"
              data-rel="dialog">Delete</a>
         </div>
-        <p class="phrase">Never Say Category™</p>
       </div><!-- /content -->
     </div><!-- /page -->
 
@@ -247,7 +275,6 @@
              data-icon="delete"
              data-rel="dialog">Delete</a>
         </div>
-        <p class="phrase">Never Say Precategory™</p>
       </div><!-- /content -->
     </div><!-- /page -->
 
@@ -310,7 +337,6 @@
              data-icon="delete"
              data-rel="dialog">Delete</a>
         </div>
-        <p class="phrase">Never Say Genre™</p>
       </div><!-- /content -->
     </div><!-- /page -->
 
@@ -373,7 +399,6 @@
              data-icon="delete"
              data-rel="dialog">Delete</a>
         </div>
-        <p class="phrase">Never Say Difficulty™</p>
       </div><!-- /content -->
     </div><!-- /page -->
 
@@ -436,7 +461,6 @@
              data-icon="delete"
              data-rel="dialog">Delete</a>
         </div>
-        <p class="phrase">Never Say Pack™</p>
       </div><!-- /content -->
     </div><!-- /page -->
 

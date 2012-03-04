@@ -626,7 +626,7 @@ def edit_phrase(phrase_id = None):
     except IndexError:
         abort(404)
     for key, value in phrase_data.items():
-        if value.lowercase() == 'null':
+        if value.lower() == 'null':
             setattr(cur_phrase, key, None)
         else:
             setattr(cur_phrase, key, value)
@@ -659,6 +659,27 @@ def delete_phrase(phrase_id = None):
 def count_phrases():
     """Count all of the phrases in the database."""
     count = db.db_session.query(Phrase).count()
+    return jsonify(count=count)
+
+@app.route('/phrases/count/approved')
+@auth.requires_auth
+def count_approved_phrases():
+    """Count all of the phrases in the database."""
+    count = db.db_session.query(Phrase).filter(Phrase.approved==1).count()
+    return jsonify(count=count)
+
+@app.route('/phrases/count/rejected')
+@auth.requires_auth
+def count_rejected_phrases():
+    """Count all of the phrases in the database."""
+    count = db.db_session.query(Phrase).filter(Phrase.approved==-1).count()
+    return jsonify(count=count)
+
+@app.route('/phrases/count/unseen')
+@auth.requires_auth
+def count_unseen_phrases():
+    """Count all of the phrases in the database."""
+    count = db.db_session.query(Phrase).filter(Phrase.approved==0).count()
     return jsonify(count=count)
 
 @app.route('/phrases/random/unapproved')

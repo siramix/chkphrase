@@ -1,19 +1,38 @@
 h1.title {
     font-family: 'Anton', Arial, serif;
     font-weight: 400;
-    font-size: 20px !important;
+    font-size: 28px !important;
     margin: 4px !important;
 }
 
-p.phrase {
+div.phrase {
     font-family: 'Francois One', sans-serif;
-    font-size: 30px;
+    font-size: 32px;
+    padding-top: 10px;
 }
 
 div#phrase_count {
     font-family: 'Anton', Arial, serif;
     font-weight: 400;
-    font-size: 20px !important;
-    margin: 4px !important;
+    font-size: 20px;
+    margin: 4px;
     text-align: center;
+}
+
+span#phrase_source {
+    padding-left: 1ex;
+}
+
+div.chooser_label, div#precategory, .ui-btn-text {
+    font-family: 'Anton', Arial, serif;
+    font-weight: 400;
+    font-size: 18px;
+}
+
+.ui-btn-left {
+    top: 2px !important;
+}
+
+span.count_container {
+    padding-right: 3ex;
 }

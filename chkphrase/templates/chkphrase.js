@@ -12,7 +12,7 @@ var $ = $ || {};
 var chkphrase = chkphrase || {};
 
 // General --------------------------------------------------------------------
-chkphrase.listToChooser = function (list, parent) {
+chkphrase.listToRadioButtons = function (list, parent) {
     'use strict';
     var index,
         html,
@@ -38,6 +38,24 @@ chkphrase.listToChooser = function (list, parent) {
     $(html).appendTo(parent).trigger('create');
 };
 
+chkphrase.listToChooser = function (list, parent, current) {
+    'use strict';
+    var index,
+        html,
+        curId,
+        curName,
+        value;
+    parent.empty();
+    html += '<option value="null">None Selected</option>';
+    for (index in list) {
+        if (list.hasOwnProperty(index)) {
+            curId = list[index].id;
+            curName = list[index].name;
+            html += '<option value="' + curId + '">' + curName + '</option>';
+        }
+    }
+    $(html).appendTo(parent).trigger('create');
+};
 
 // Main -----------------------------------------------------------------------
 chkphrase.main = chkphrase.main || {};
@@ -50,18 +68,111 @@ chkphrase.main.pageshow = function () {
     $.getJSON('{{app_root}}/phrases/count', function (data) {
         $('#phrase_count_value').html(data.count);
     });
+    $.getJSON('{{app_root}}/phrases/count/approved', function (data) {
+        $('#phrase_approved_count').html(data.count);
+    });
+    $.getJSON('{{app_root}}/phrases/count/rejected', function (data) {
+        $('#phrase_rejected_count').html(data.count);
+    });
+    $.getJSON('{{app_root}}/phrases/count/unseen', function (data) {
+        $('#phrase_unseen_count').html(data.count);
+    });
 };
 
 // Main -----------------------------------------------------------------------
 chkphrase.phrases = chkphrase.phrases || {};
+chkphrase.phrases.cur_phrase = chkphrase.phrases.cur_phrase || {};
+
+chkphrase.phrases.approve = function (approval) {
+    'use strict';
+    var params,
+        category_val,
+        genre_val,
+        difficulty_val,
+        pack_val,
+        id;
+    category_val = $('#phrase_category_chooser').val();
+    genre_val = $('#phrase_genre_chooser').val();
+    difficulty_val = $('#phrase_difficulty_chooser').val();
+    pack_val = $('#phrase_pack_chooser').val();
+    id = chkphrase.phrases.cur_phrase.id;
+    params = {
+        'phrase' : chkphrase.phrases.cur_phrase.phrase,
+        'approved' : approval,
+        'category_id' : category_val,
+        'genre_id' : genre_val,
+        'difficulty_id' : difficulty_val,
+        'pack_id' : pack_val
+    };
+
+    return $.post('{{app_root}}/phrases/edit/' + id, params);
+};
 
 /**
- * Load the phrase count each time the home screen is visited.
+ * The things to do when showing the phrase page.
+ * We load a random unapproved item and display stats about it.
  */
 chkphrase.phrases.pageshow = function () {
     'use strict';
-    $.getJSON('{{app_root}}/phrases/random/unapproved', function (data) {
-        $('#cur_phrase').html(data.phrase);
+    var cur_phrase,
+        category_chooser,
+        genre_chooser,
+        difficulty_chooser,
+        pack_chooser,
+        precategory_div;
+    $.mobile.showPageLoadingMsg();
+    precategory_div = $('#precategory');
+    category_chooser = $('#phrase_category_chooser');
+    genre_chooser = $('#phrase_genre_chooser');
+    difficulty_chooser = $('#phrase_difficulty_chooser');
+    pack_chooser = $('#phrase_pack_chooser');
+    $.ajax({
+        'url' : '{{app_root}}/phrases/random/unapproved',
+        'cache' : false,
+        'success' : function (phrase) {
+            cur_phrase = phrase;
+            chkphrase.phrases.cur_phrase = phrase;
+            $('#cur_phrase').html(phrase.phrase);
+            $('#phrase_source').html(phrase.source);
+        }
+    }).then(function () {
+        $.getJSON('{{app_root}}/categories', function (categories) {
+            chkphrase.listToChooser(categories, category_chooser,
+                                    cur_phrase.category);
+        });
+    }).then(function () {
+        $.getJSON('{{app_root}}/genres', function (genres) {
+            chkphrase.listToChooser(genres, genre_chooser, cur_phrase.genre);
+        });
+    }).then(function () {
+        $.getJSON('{{app_root}}/difficulties', function (difficulties) {
+            chkphrase.listToChooser(difficulties, difficulty_chooser,
+                                    cur_phrase.difficulty);
+        });
+    }).then(function () {
+        $.getJSON('{{app_root}}/packs', function (packs) {
+            chkphrase.listToChooser(packs, pack_chooser, cur_phrase.pack);
+        });
+        if (!$.isEmptyObject(cur_phrase.pre_category)) {
+            precategory_div.html(cur_phrase.pre_category.name);
+        } else {
+            precategory_div.html('No Precategory Provided');
+        }
+    }).then(function () {
+        $('#phrase_approve_button').unbind('click').click(function () {
+            chkphrase.phrases.approve(1).success(function () {
+                $('#phrases').trigger('pageshow');
+            });
+        }).removeClass('ui-btn-active');
+        $('#phrase_reject_button').unbind('click').click(function () {
+            chkphrase.phrases.approve(-1).success(function () {
+                chkphrase.phrases.pageshow();
+            });
+        }).removeClass('ui-btn-active');
+        $('#phrase_edit_button').unbind('click').click(function () {
+            chkphrase.phrases.pageshow();
+        }).removeClass('ui-btn-active');
+        $.mobile.hidePageLoadingMsg();
     });
 };
 
@@ -75,7 +186,7 @@ chkphrase.users.data = chkphrase.users.data || {};
 chkphrase.users.pageshow = function () {
     'use strict';
     $.getJSON('{{app_root}}/users', function (data) {
-        chkphrase.listToChooser(data, $('#user_list'));
+        chkphrase.listToRadioButtons(data, $('#user_list'));
         $('#user_list input').unbind('change').change(function () {
             $('#users .ui-disabled').removeClass('ui-disabled');
             chkphrase.users.data.selectedId = $(this).val();
@@ -131,7 +242,7 @@ chkphrase.categories.data = chkphrase.categories.data || {};
 chkphrase.categories.pageshow = function () {
     'use strict';
     $.getJSON('{{app_root}}/categories', function (data) {
-        chkphrase.listToChooser(data, $('#category_list'));
+        chkphrase.listToRadioButtons(data, $('#category_list'));
         $('#category_list input').unbind('change').change(function () {
             $('#categories .ui-disabled').removeClass('ui-disabled');
             chkphrase.categories.data.selectedId = $(this).val();
@@ -182,7 +293,7 @@ chkphrase.precategories.data = chkphrase.precategories.data || {};
 chkphrase.precategories.pageshow = function () {
     'use strict';
     $.getJSON('{{app_root}}/precategories', function (data) {
-        chkphrase.listToChooser(data, $('#precategory_list'));
+        chkphrase.listToRadioButtons(data, $('#precategory_list'));
         $('#precategory_list input').unbind('change').change(function () {
             $('#precategories .ui-disabled').removeClass('ui-disabled');
             chkphrase.precategories.data.selectedId = $(this).val();
@@ -233,7 +344,7 @@ chkphrase.genres.data = chkphrase.genres.data || {};
 chkphrase.genres.pageshow = function () {
     'use strict';
     $.getJSON('{{app_root}}/genres', function (data) {
-        chkphrase.listToChooser(data, $('#genre_list'));
+        chkphrase.listToRadioButtons(data, $('#genre_list'));
         $('#genre_list input').unbind('change').change(function () {
             $('#genres .ui-disabled').removeClass('ui-disabled');
             chkphrase.genres.data.selectedId = $(this).val();
@@ -284,7 +395,7 @@ chkphrase.difficulties.data = chkphrase.difficulties.data || {};
 chkphrase.difficulties.pageshow = function () {
     'use strict';
     $.getJSON('{{app_root}}/difficulties', function (data) {
-        chkphrase.listToChooser(data, $('#difficulty_list'));
+        chkphrase.listToRadioButtons(data, $('#difficulty_list'));
         $('#difficulty_list input').unbind('change').change(function () {
             $('#difficulties .ui-disabled').removeClass('ui-disabled');
             chkphrase.difficulties.data.selectedId = $(this).val();
@@ -335,7 +446,7 @@ chkphrase.packs.data = chkphrase.packs.data || {};
 chkphrase.packs.pageshow = function () {
     'use strict';
     $.getJSON('{{app_root}}/packs', function (data) {
-        chkphrase.listToChooser(data, $('#pack_list'));
+        chkphrase.listToRadioButtons(data, $('#pack_list'));
         $('#pack_list input').unbind('change').change(function () {
             $('#packs .ui-disabled').removeClass('ui-disabled');
             chkphrase.packs.data.selectedId = $(this).val();
@@ -378,6 +489,7 @@ chkphrase.packs.dialogshow = function () {
 
 $(document).bind('mobileinit', function () {
     'use strict';
+    $.mobile.defaultPageTransition = 'slide';
     $('#main').live('pageshow', chkphrase.main.pageshow);
 
     $('#phrases').live('pageshow', chkphrase.phrases.pageshow);
