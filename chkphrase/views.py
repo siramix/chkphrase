@@ -691,4 +691,4 @@ def random_phrase():
         cur_phrase = query[0]
     except IndexError:
         abort(404)
-    return redirect("/phrases/%d" % cur_phrase.id, 301)
+    return redirect("%s/phrases/%d" % (conf.app_root, cur_phrase.id), 301)
