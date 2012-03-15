@@ -38,7 +38,7 @@ chkphrase.listToRadioButtons = function (list, parent) {
     $(html).appendTo(parent).trigger('create');
 };
 
-chkphrase.listToChooser = function (list, parent, current) {
+chkphrase.listToChooser = function (list, parent) {
     'use strict';
     var index,
         html,
@@ -79,7 +79,92 @@ chkphrase.main.pageshow = function () {
     });
 };
 
-// Main -----------------------------------------------------------------------
+// Add Phrase -----------------------------------------------------------------
+chkphrase.addphrase = chkphrase.phrase || {};
+
+chkphrase.addphrase.add = function () {
+    'use strict';
+    var params,
+        phrase,
+        category_val,
+        genre_val,
+        difficulty_val,
+        pack_val,
+        id;
+    category_val = $('#phrase_category_chooser').val();
+    genre_val = $('#phrase_genre_chooser').val();
+    difficulty_val = $('#phrase_difficulty_chooser').val();
+    pack_val = $('#phrase_pack_chooser').val();
+    phrase = $('#cur_add_phrase').val();
+    params = {
+        'phrase' : phrase,
+        'approved' : '1',
+        'source' : 'custom'
+    };
+
+    if (!category_val) {
+        params.category_id = category_val;
+    }
+    if (!genre_val) {
+        params.genre_id = genre_val;
+    }
+    if (!difficulty_val) {
+        params.difficulty_id = difficulty_val;
+    }
+    if (!pack_val) {
+        params.pack_id = pack_val;
+    }
+
+    return $.post('{{app_root}}/phrases/add', params);
+};
+
+/**
+ * The things to do when showing the phrase page.
+ * We load a random unapproved item and display stats about it.
+ */
+chkphrase.addphrase.pageshow = function () {
+    'use strict';
+    var cur_phrase,
+        category_chooser,
+        genre_chooser,
+        difficulty_chooser,
+        pack_chooser,
+        precategory_div;
+    $.mobile.showPageLoadingMsg();
+    category_chooser = $('#addphrase_category_chooser');
+    genre_chooser = $('#addphrase_genre_chooser');
+    difficulty_chooser = $('#addphrase_difficulty_chooser');
+    pack_chooser = $('#addphrase_pack_chooser');
+    $.getJSON('{{app_root}}/categories', function (categories) {
+        chkphrase.listToChooser(categories, category_chooser);
+    });
+    $.getJSON('{{app_root}}/genres', function (genres) {
+        chkphrase.listToChooser(genres, genre_chooser);
+    });
+    $.getJSON('{{app_root}}/difficulties', function (difficulties) {
+        chkphrase.listToChooser(difficulties, difficulty_chooser);
+    });
+    $.getJSON('{{app_root}}/packs', function (packs) {
+        chkphrase.listToChooser(packs, pack_chooser);
+    }).then(function () {
+        $('#addphrase_add_button').unbind('click').click(function () {
+            chkphrase.addphrase.add().success(function () {
+                $('#cur_add_phrase').val('');
+            }).error(function () {
+                alert('Something went wrong! Maybe you entered a duplicate?');
+            }).complete(function () {
+                $('#addphrase').trigger('pageshow');
+            });
+        }).removeClass('ui-btn-active');
+        $('#addphrase_clear_button').unbind('click').click(function () {
+            $('#cur_add_phrase').val('');
+            $('#addphrase').trigger('pageshow');
+        }).removeClass('ui-btn-active');
+        $.mobile.hidePageLoadingMsg();
+    });
+};
+
+// Phrases --------------------------------------------------------------------
 chkphrase.phrases = chkphrase.phrases || {};
 chkphrase.phrases.cur_phrase = chkphrase.phrases.cur_phrase || {};
 
@@ -137,21 +222,19 @@ chkphrase.phrases.pageshow = function () {
         }
     }).then(function () {
         $.getJSON('{{app_root}}/categories', function (categories) {
-            chkphrase.listToChooser(categories, category_chooser,
-                                    cur_phrase.category);
+            chkphrase.listToChooser(categories, category_chooser);
         });
     }).then(function () {
         $.getJSON('{{app_root}}/genres', function (genres) {
-            chkphrase.listToChooser(genres, genre_chooser, cur_phrase.genre);
+            chkphrase.listToChooser(genres, genre_chooser);
         });
     }).then(function () {
         $.getJSON('{{app_root}}/difficulties', function (difficulties) {
-            chkphrase.listToChooser(difficulties, difficulty_chooser,
-                                    cur_phrase.difficulty);
+            chkphrase.listToChooser(difficulties, difficulty_chooser);
         });
     }).then(function () {
         $.getJSON('{{app_root}}/packs', function (packs) {
-            chkphrase.listToChooser(packs, pack_chooser, cur_phrase.pack);
+            chkphrase.listToChooser(packs, pack_chooser);
         });
         if (!$.isEmptyObject(cur_phrase.pre_category)) {
             precategory_div.html(cur_phrase.pre_category.name);
@@ -491,6 +574,8 @@ $(document).bind('mobileinit', function () {
     'use strict';
     $.mobile.defaultPageTransition = 'slide';
     $('#main').live('pageshow', chkphrase.main.pageshow);
+
+    $('#addphrase').live('pageshow', chkphrase.addphrase.pageshow);
 
     $('#phrases').live('pageshow', chkphrase.phrases.pageshow);
 

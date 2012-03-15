@@ -27,6 +27,7 @@
       </div><!-- /header -->
       <div data-role="content">
         <ul data-role="listview" data-inset="true">
+	  <li><a href="#addphrase">Add Phrase</a></li>
 	  <li><a href="#phrases">Approve Phrases</a></li>
 	  <li><a href="#users">Manage Users</a></li>
 	  <li><a href="#categories">Manage Categories</a></li>
@@ -53,6 +54,52 @@
             <span id="phrase_unseen_count">0</span>
           </span>
         </div>
+      </div><!-- /content -->
+    </div><!-- /page -->
+
+<!-- Add Phrase ---------------------------------------------------------------->
+    <div data-role="page" id="addphrase">
+      <div data-role="header">
+        <a href="#main"
+           data-icon="home"
+           data-iconpos="notext"
+           data-direction="reverse" class="ui-btn-left jqm-home">Home</a>
+	<h1 class="title">Check Phrase</h1>
+      </div><!-- /header -->
+      <div data-role="content">
+        <input type="text" name="cur_add_phrase" id="cur_add_phrase" value="" />
+        <div data-role="fieldcontain" data-type="horizontal">
+          <a href="#addphrase"
+             id="addphrase_add_button"
+             data-role="button"
+             data-inline="true"
+             data-icon="plus"
+             data-rel="dialog">Add</a>
+          <a href="#addphrase"
+             id="addphrase_clear_button"
+             data-role="button"
+             data-inline="true"
+             data-icon="delete"
+             data-rel="dialog">Clear</a>
+        </div>
+        <div data-role="fieldcontain">
+          <div class="chooser_label">Category:</div>
+	  <select name="category" id="addphrase_category_chooser">
+            <option value="null">None Selected</option>
+	  </select>
+          <div class="chooser_label">Genre:</div>
+	  <select name="genre" id="addphrase_genre_chooser">
+            <option value="null">None Selected</option>
+	  </select>
+          <div class="chooser_label">Difficulty:</div>
+	  <select name="difficulty" id="addphrase_difficulty_chooser">
+            <option value="null">None Selected</option>
+	  </select>
+          <div class="chooser_label">Pack:</div>
+	  <select name="pack" id="addphrase_pack_chooser">
+            <option value="null">None Selected</option>
+	  </select>
+	</div>
       </div><!-- /content -->
     </div><!-- /page -->
 
