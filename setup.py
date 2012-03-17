@@ -12,6 +12,6 @@ setup(
         'Flask-SQLAlchemy>=0.15',
         'MySQL-python>=1.2.3',
         'SQLAlchemy>=0.7.5',
-        'BeautifulSoup>=3.2.1'
+        'BeautifulSoup>=3.2.1',
         'requests>=0.10.6']
 )
