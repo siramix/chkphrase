@@ -669,6 +669,28 @@ def phrases():
     session.close()
     return jsonify(res)
 
+@app.route('/phrases/approved')
+@auth.requires_auth
+def phrases_approved():
+    """Return a json-encoded list of phrases. This is going to choke and
+    probably die once there is a very large database."""
+    session = db.db_session()
+    res = dict()
+    query = session.query(Phrase).filter(Phrase.approved==1)
+    out = ''
+    for cur_phrase in query:
+        cur_res = _phrase_to_dict(cur_phrase)
+        res[cur_phrase.id] = cur_res
+        if cur_res['difficulty'] != None:
+            out += '{"phrase": "%s", "_id": %d, "difficulty": -1}\n' % (cur_res['phrase'], cur_res['id'])
+        else:
+            out += '{"phrase": "%s", "_id": %d, "difficulty": %d}\n' % (cur_res['phrase'], cur_res['id'], cur_res['difficulty']['id'])
+    session.close()
+    ret = make_response()
+    ret.mimetype = 'application/json'
+    ret.data = out
+    return ret
+
 @app.route('/phrases/<int:phrase_id>')
 @auth.requires_auth
 def phrase(phrase_id = None):
