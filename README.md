@@ -22,15 +22,20 @@ These instructions will assume that you have installed virtualenv and
 
 1. Fetch the source code from github.
     
-    ```$ git clone git://github.com/siramix/chkphrase.git```
+    $ git clone git://github.com/siramix/chkphrase.git
+
 
 2. Setup the MySQL database (This assumes you have MySQL installed on your
    platform).
 
-    ```$ mysql -u root -p # Enter your password
+    $ mysql -u root -p # Enter your password
+   
     mysql> create database chkphrase;
+   
     mysql> create user chkphrase;
+   
     mysql> grant all on chkphrase.* to 'chkphrase'@'localhost' identified by 'chkphrase'
+   
     mysql> \q```
 
 3. Setup the installation for development
