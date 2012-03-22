@@ -20,12 +20,12 @@ documentation will assume that that's what you are doing
 These instructions will assume that you have installed virtualenv and
 [pip](http://pypi.python.org/pypi/pip).
 
-1. Fetch the source code from github.
+__Fetch the source code from github.__
     
     $ git clone git://github.com/siramix/chkphrase.git
 
-2. Setup the MySQL database (This assumes you have MySQL installed on your
-   platform).
+__Setup the MySQL database (This assumes you have MySQL installed on your
+   platform)__
 
     ```
     $ mysql -u root -p # Enter your password   
@@ -35,7 +35,7 @@ These instructions will assume that you have installed virtualenv and
     mysql> \q
     ```
 
-3. Setup the installation for development
+__Setup the installation for development__
 
     ```
     $ virtualenv chkphrase_env
@@ -44,7 +44,7 @@ These instructions will assume that you have installed virtualenv and
     (chkphrase_env)$ python setup.py develop # This should fetch dependencies
     ```
 
-4. Initialize the database and create a user
+__Initialize the database and create a user__
 
     ```
     (chkphrase_env)$ python
@@ -57,7 +57,7 @@ These instructions will assume that you have installed virtualenv and
     >>> quit()
     ```
 
-5. Startup the dev server
+__Startup the dev server__
 
     ```
     (chkphrase_env)$ python runserver.py
