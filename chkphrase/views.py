@@ -629,6 +629,7 @@ def _phrase_to_dict(cur_phrase):
     cur_res['phrase'] = cur_phrase.phrase
     cur_res['source'] = cur_phrase.source
     cur_res['approved'] = cur_phrase.approved
+    cur_res['buzzworthy'] = cur_phrase.buzzworthy
     cur_res['user'] = dict()
     if cur_phrase.user != None:
         cur_res['user']['id'] = cur_phrase.user.id
@@ -677,6 +678,28 @@ def phrases_approved():
     session = db.db_session()
     res = dict()
     query = session.query(Phrase).filter(Phrase.approved==1)
+    out = ''
+    for cur_phrase in query:
+        cur_res = _phrase_to_dict(cur_phrase)
+        res[cur_phrase.id] = cur_res
+        if cur_res['difficulty'] != None:
+            out += '{"phrase": "%s", "_id": %d, "difficulty": -1}\n' % (cur_res['phrase'], cur_res['id'])
+        else:
+            out += '{"phrase": "%s", "_id": %d, "difficulty": %d}\n' % (cur_res['phrase'], cur_res['id'], cur_res['difficulty']['id'])
+    session.close()
+    ret = make_response()
+    ret.mimetype = 'application/json'
+    ret.data = out
+    return ret
+
+@app.route('/phrases/buzzworthy')
+@auth.requires_auth
+def phrases_buzzworthy():
+    """Return a json-encoded list of buzzworthy phrases. This is going to choke and
+    probably die once there is a very large database."""
+    session = db.db_session()
+    res = dict()
+    query = session.query(Phrase).filter(Phrase.buzzworthy==1)
     out = ''
     for cur_phrase in query:
         cur_res = _phrase_to_dict(cur_phrase)
@@ -794,12 +817,21 @@ def count_approved_phrases():
     session.close()
     return jsonify(count=count)
 
+@app.route('/phrases/count/buzzworthy')
+@auth.requires_auth
+def count_buzzworthy_phrases():
+    """Count all of the phrases in the database."""
+    session = db.db_session()
+    count = session.query(Phrase).filter(Phrase.buzzworthy==1).count()
+    session.close()
+    return jsonify(count=count)
+
 @app.route('/phrases/count/rejected')
 @auth.requires_auth
 def count_rejected_phrases():
     """Count all of the phrases in the database."""
     session = db.db_session()
-    count = session.query(Phrase).filter(Phrase.approved==-1).count()
+    count = session.query(Phrase).filter(Phrase.approved==-1).filter(Phrase.buzzworthy==-1).count()
     session.close()
     return jsonify(count=count)
 

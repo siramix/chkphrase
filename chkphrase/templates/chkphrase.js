@@ -71,6 +71,9 @@ chkphrase.main.pageshow = function () {
     $.getJSON('{{app_root}}/phrases/count/approved', function (data) {
         $('#phrase_approved_count').html(data.count);
     });
+    $.getJSON('{{app_root}}/phrases/count/buzzworthy', function (data) {
+        $('#phrase_buzzworthy_count').html(data.count);
+    });
     $.getJSON('{{app_root}}/phrases/count/rejected', function (data) {
         $('#phrase_rejected_count').html(data.count);
     });
@@ -99,6 +102,7 @@ chkphrase.addphrase.add = function () {
     params = {
         'phrase' : phrase,
         'approved' : '1',
+        'buzzworthy' : '-1',
         'source' : 'custom'
     };
 
@@ -168,12 +172,19 @@ chkphrase.addphrase.pageshow = function () {
 chkphrase.phrases = chkphrase.phrases || {};
 chkphrase.phrases.cur_phrase = chkphrase.phrases.cur_phrase || {};
 
+/**
+ * Sets the phrase data for an approved word.  In the process this
+ * rejects the word from Buzzwords as we don't want to reuse the
+ * same words, i.e. a phrase can only be Approved for Phrasecraze 
+ * or Buzzworthy
+ */
 chkphrase.phrases.approve = function (approval) {
     'use strict';
     var params,
         category_val,
         genre_val,
         difficulty_val,
+        buzzworthy,
         pack_val,
         id;
     category_val = $('#phrase_category_chooser').val();
@@ -184,6 +195,41 @@ chkphrase.phrases.approve = function (approval) {
     params = {
         'phrase' : chkphrase.phrases.cur_phrase.phrase,
         'approved' : approval,
+        'buzzworthy' : -1,
+        'category_id' : category_val,
+        'genre_id' : genre_val,
+        'difficulty_id' : difficulty_val,
+        'pack_id' : pack_val
+    };
+
+    return $.post('{{app_root}}/phrases/edit/' + id, params);
+};
+
+/**
+ * Sets the phrase data for a word that we might want to use
+ * for Buzzwords, rejecting the word for phrasecraze.  
+ * Phrase state after function:
+ *   Approval: -1
+ *   Buzzworthy: 1
+ */
+chkphrase.phrases.setbuzzworthy = function (buzzworthy) {
+    'use strict';
+    var params,
+        category_val,
+        genre_val,
+        difficulty_val,
+        buzzworthy,
+        pack_val,
+        id;
+    category_val = $('#phrase_category_chooser').val();
+    genre_val = $('#phrase_genre_chooser').val();
+    difficulty_val = $('#phrase_difficulty_chooser').val();
+    pack_val = $('#phrase_pack_chooser').val();
+    id = chkphrase.phrases.cur_phrase.id;
+    params = {
+        'phrase' : chkphrase.phrases.cur_phrase.phrase,
+        'approved' : -1,
+	'buzzworthy' : buzzworthy,
         'category_id' : category_val,
         'genre_id' : genre_val,
         'difficulty_id' : difficulty_val,
@@ -244,6 +290,11 @@ chkphrase.phrases.pageshow = function () {
     }).then(function () {
         $('#phrase_approve_button').unbind('click').click(function () {
             chkphrase.phrases.approve(1).success(function () {
+                $('#phrases').trigger('pageshow');
+            });
+        }).removeClass('ui-btn-active');
+        $('#phrase_buzzworthy_button').unbind('click').click(function () {
+            chkphrase.phrases.setbuzzworthy(1).success(function () {
                 $('#phrases').trigger('pageshow');
             });
         }).removeClass('ui-btn-active');

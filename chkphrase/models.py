@@ -91,6 +91,7 @@ class Phrase(Base):
     difficulty_id = Column(Integer, ForeignKey('difficulties.id'))
     pack_id  = Column(Integer, ForeignKey('packs.id'))
     approved = Column(Integer, default=0)
+    buzzworthy = Column(Integer, default=0)
 
     user = relationship('User', backref='users')
     pre_category = relationship('PreCategory', backref='precategories')
