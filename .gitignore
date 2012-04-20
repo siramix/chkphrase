@@ -1,1 +1,4 @@
 *.pyc
+Check_Phrase.egg-info/
+build/
+dist/
