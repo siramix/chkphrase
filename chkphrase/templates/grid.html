@@ -1,0 +1,115 @@
+<!doctype html>
+<html>
+<head>
+  <title>SlickGrid example 6: AJAX Load</title>
+  <link rel="stylesheet" href="{{app_root}}/css/slick.grid.css" type="text/css"/>
+  <link rel="stylesheet"
+        href="{{app_root}}/css/jquery-ui-1.8.16.custom.css"
+        type="text/css" />
+  <link href="{{app_root}}/css/style.css" rel="stylesheet" />
+  <link href="{{app_root}}/css/examples.css" rel="stylesheet" />
+</head>
+<body>
+<div style="width:100%;float:left;">
+  <div class="grid-header" style="width:100%">
+    <label>Digg stories</label>
+        <span style="float:right;display:inline-block;">
+          Search:
+          <input type="text" id="txtSearch" value="apple">
+        </span>
+  </div>
+  <div id="myGrid" style="width:100%;height:600px;"></div>
+  <div id="pager" style="width:100%;height:20px;"></div>
+</div>
+
+<script src="{{app_root}}/js/firebugx.js"></script>
+
+<script src="{{app_root}}/js/jquery-1.7.min.js"></script>
+<script src="{{app_root}}/js/jquery-ui-1.8.16.custom.min.js"></script>
+<script src="{{app_root}}/js/jquery.event.drag-2.0.min.js"></script>
+<script src="{{app_root}}/js/jquery.jsonp-1.1.0.min.js"></script>
+
+<script src="{{app_root}}/js/slick.core.js"></script>
+<script src="{{app_root}}/js/slick.remotemodel.js"></script>
+<script src="{{app_root}}/js/slick.grid.js"></script>
+
+<script>
+  var grid;
+  var loader = new Slick.Data.RemoteModel();
+
+  var storyTitleFormatter = function (row, cell, value, columnDef, dataContext) {
+    return "<b><a href='" + dataContext["link"] + "' target=_blank>" +
+        dataContext["title"] + "</a></b><br/>" + dataContext["description"];
+  };
+
+
+  var columns = [
+    {id: "phraseid", name: "#", field: "id"},
+    {id: "phrase", name: "Phrase", field: "phrase"},
+    {id: "approved", name: "Approved", field: "approved"}
+  ];
+
+  var options = {
+    rowHeight: 60,
+    editable: false,
+    enableAddRow: false,
+    enableCellNavigation: false
+  };
+
+  var loadingIndicator = null;
+
+
+  $(function () {
+    grid = new Slick.Grid("#myGrid", loader.data, columns, options);
+
+    grid.onViewportChanged.subscribe(function (e, args) {
+      var vp = grid.getViewport();
+      console.log(vp);
+      loader.ensureData(vp.top, vp.bottom);
+    });
+
+    grid.onSort.subscribe(function (e, args) {
+      loader.setSort(args.sortCol.field, args.sortAsc ? 1 : -1);
+      var vp = grid.getViewport();
+      loader.ensureData(vp.top, vp.bottom);
+    });
+
+    loader.onDataLoading.subscribe(function () {
+      if (!loadingIndicator) {
+        loadingIndicator = $("<span class='loading-indicator'><label>Buffering...</label></span>").appendTo(document.body);
+        var $g = $("#myGrid");
+
+        loadingIndicator
+            .css("position", "absolute")
+            .css("top", $g.position().top + $g.height() / 2 - loadingIndicator.height() / 2)
+            .css("left", $g.position().left + $g.width() / 2 - loadingIndicator.width() / 2);
+      }
+
+      loadingIndicator.show();
+    });
+
+    loader.onDataLoaded.subscribe(function (e, args) {
+      for (var i = args.from; i <= args.to; i++) {
+        grid.invalidateRow(i);
+      }
+
+      grid.updateRowCount();
+      grid.render();
+
+      loadingIndicator.fadeOut();
+    });
+
+    $("#txtSearch").keyup(function (e) {
+      if (e.which == 13) {
+        loader.setSearch($(this).val());
+        var vp = grid.getViewport();
+        loader.ensureData(vp.top, vp.bottom);
+      }
+    });
+
+    // load the first page
+    grid.onViewportChanged.notify();
+  })
+</script>
+</body>
+</html>

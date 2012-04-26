@@ -7,8 +7,10 @@
  * IMPORTANT: JQuery Mobile 1.0.1 should be included AFTER this script.
  */
 
+/*global $*/
+/*global document*/
+
 // Namespaces
-var $ = $ || {};
 var chkphrase = chkphrase || {};
 
 // General --------------------------------------------------------------------
@@ -184,7 +186,6 @@ chkphrase.phrases.approve = function (approval) {
         category_val,
         genre_val,
         difficulty_val,
-        buzzworthy,
         pack_val,
         id;
     category_val = $('#phrase_category_chooser').val();
@@ -218,7 +219,6 @@ chkphrase.phrases.setbuzzworthy = function (buzzworthy) {
         category_val,
         genre_val,
         difficulty_val,
-        buzzworthy,
         pack_val,
         id;
     category_val = $('#phrase_category_chooser').val();
@@ -229,7 +229,7 @@ chkphrase.phrases.setbuzzworthy = function (buzzworthy) {
     params = {
         'phrase' : chkphrase.phrases.cur_phrase.phrase,
         'approved' : -1,
-	'buzzworthy' : buzzworthy,
+        'buzzworthy' : buzzworthy,
         'category_id' : category_val,
         'genre_id' : genre_val,
         'difficulty_id' : difficulty_val,

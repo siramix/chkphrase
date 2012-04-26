@@ -31,21 +31,36 @@ def index():
     cur_user = request.authorization.username
     return render_template('index.html', user=cur_user, app_root=conf.app_root)
 
-@app.route('/css/style.css')
-def css():
+@app.route('/grid.html')
+@auth.requires_auth
+def grid():
+    """Render the grid page."""
+    return render_template('grid.html', app_root=conf.app_root)
+
+@app.route('/css/<stylesheet>')
+def css(stylesheet):
     """Render the stylesheet."""
     ret = make_response()
     ret.mimetype = 'text/css'
-    ret.data = render_template('style.css')
+    ret.data = render_template('css/' + stylesheet, app_root=conf.app_root)
     return ret
 
-@app.route('/js/chkphrase.js')
-def js():
+@app.route('/js/<script>')
+def js(script):
     """Render the javascript with the application root."""
     ret = make_response()
     ret.mimetype = 'application/javascript'
-    ret.data = render_template('chkphrase.js', app_root=conf.app_root)    
-    return ret    
+    ret.data = render_template('js/' + script, app_root=conf.app_root)
+    return ret
+
+@app.route('/images/<image>')
+@app.route('/css/images/<image>')
+def images(image):
+    """Render the image."""
+    ret = make_response()
+    ret.mimetype = 'image/' + image.split('.')[-1]
+    ret.data = open('chkphrase/templates/images/' + image).read()
+    return ret
 
 @app.route('/users')
 @auth.requires_auth
@@ -663,10 +678,24 @@ def phrases():
     probably die once there is a very large database."""
     session = db.db_session()
     res = dict()
-    query = session.query(Phrase)
+    if request.args.has_key('count') and request.args.has_key('offset'):
+        strCount = request.args['count']
+        strOffset = request.args['offset']
+        if strCount != u'NaN' and strOffset != u'NaN':
+            count = int(strCount)
+            offset = int(strOffset)
+            query = session.query(Phrase)[offset:offset+count]
+        else:
+            query = session.query(Phrase)[0:0]
+    else:
+        query = session.query(Phrase)
+    counter = 0
     for cur_phrase in query:
         cur_res = _phrase_to_dict(cur_phrase)
-        res[cur_phrase.id] = cur_res
+        res[offset+counter] = cur_res
+        counter += 1
+    res['count'] = counter
+    res['total'] = session.query(Phrase).count()
     session.close()
     return jsonify(res)
 
@@ -677,7 +706,12 @@ def phrases_approved():
     probably die once there is a very large database."""
     session = db.db_session()
     res = dict()
-    query = session.query(Phrase).filter(Phrase.approved==1)
+    if request.args.has_key('count') and request.args.has_key('offset'):
+        count = request.args['count']
+        offset = request.args['offset']
+        query = session.query(Phrase).filter(Phrase.approved==1)[offset:offset+count]
+    else:
+        query = session.query(Phrase).filter(Phrase.approved==1)
     out = ''
     for cur_phrase in query:
         cur_res = _phrase_to_dict(cur_phrase)
