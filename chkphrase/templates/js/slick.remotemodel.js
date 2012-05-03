@@ -60,17 +60,16 @@
                 }
             }
 
-            console.log(from);
-            console.log(to);
-
             if (from < 0) {
                 from = 0;
             }
 
+            console.log('From: ' + from);
+            console.log('To: ' + to);
             fromPage = Math.floor(from / PAGESIZE);
             toPage = Math.floor(to / PAGESIZE);
 
-            while (data[fromPage * PAGESIZE] !== undefined && fromPage <  toPage) {
+            while (data[fromPage * PAGESIZE] !== undefined && fromPage <= toPage) {
                 fromPage += 1;
             }
 
@@ -83,6 +82,8 @@
                 return;
             }
 
+            console.log(fromPage);
+            console.log(toPage);
             url = "{{app_root}}/phrases?offset=" + (fromPage * PAGESIZE) + "&count=" + (((toPage - fromPage) * PAGESIZE) + PAGESIZE);
             console.log(url);
 
@@ -100,7 +101,7 @@
                 req = $.ajax({ url: url,
                                dataType: 'json',
                                success: onSuccess,
-                               error: function () { onError(fromPage, toPage); }
+                               error: function () {} //onError(fromPage, toPage); }
                              });
                 req.fromPage = fromPage;
                 req.toPage = toPage;
@@ -112,12 +113,15 @@
                 to = from + resp.count,
                 i;
             data.length = parseInt(resp.total, 10);
+            console.log(resp);
 
             for (i = 0; i < resp.count; i += 1) {
                 data[from + i] = {};
-                data[from + i].id = resp[i].id;
-                data[from + i].phrase = resp[i].phrase;
-                data[from + i].approved = resp[i].approved;
+                data[from + i].id = resp[from + i].id;
+                data[from + i].phrase = resp[from + i].phrase;
+                data[from + i].approved = resp[from + i].approved;
+                data[from + i].buzzworthy = resp[from + i].buzzworthy;
+                data[from + i].source = resp[from + i].source;
                 data[from + i].index = from + i;
             }
 
