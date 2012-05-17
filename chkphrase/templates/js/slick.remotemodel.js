@@ -84,7 +84,8 @@
 
             console.log(fromPage);
             console.log(toPage);
-            url = "{{app_root}}/phrases?offset=" + (fromPage * PAGESIZE) + "&count=" + (((toPage - fromPage) * PAGESIZE) + PAGESIZE);
+            url = "{{app_root}}/phrases?offset=" + (fromPage * PAGESIZE) +
+                "&count=" + (((toPage - fromPage) * PAGESIZE) + PAGESIZE);
             console.log(url);
 
             if (h_request !== null) {
@@ -111,16 +112,28 @@
         onSuccess = function (resp, textStatus, jqXHR) {
             var from = req.fromPage * PAGESIZE,
                 to = from + resp.count,
-                i;
+                i,
+                curObj;
             data.length = parseInt(resp.total, 10);
             console.log(resp);
 
             for (i = 0; i < resp.count; i += 1) {
+                curObj = resp[from + i];
                 data[from + i] = {};
                 data[from + i].id = resp[from + i].id;
                 data[from + i].phrase = resp[from + i].phrase;
                 data[from + i].approved = resp[from + i].approved;
                 data[from + i].buzzworthy = resp[from + i].buzzworthy;
+//                data[from + i].category = resp[from + i].catgory.name;
+                if (curObj.hasOwnProperty("difficulty")) {
+                    if (curObj.difficulty.hasOwnProperty("name")) {
+                        data[from + i].difficulty = curObj.difficulty.name;
+                        console.log('FOOOO');
+                    }
+                }
+/*                data[from + i].genre = resp[from + i].genre.name;
+                data[from + i].pack = resp[from + i].pack.name;
+                data[from + i].user = resp[from + i].user.name; */
                 data[from + i].source = resp[from + i].source;
                 data[from + i].index = from + i;
             }

@@ -679,14 +679,9 @@ def phrases():
     session = db.db_session()
     res = dict()
     if request.args.has_key('count') and request.args.has_key('offset'):
-        strCount = request.args['count']
-        strOffset = request.args['offset']
-        if strCount != u'NaN' and strOffset != u'NaN':
-            count = int(strCount)
-            offset = int(strOffset)
-            query = session.query(Phrase)[offset:offset+count]
-        else:
-            query = session.query(Phrase)[0:0]
+        count = int(request.args['count'])
+        offset = int(request.args['offset'])
+        query = session.query(Phrase)[offset:offset+count]
     else:
         query = session.query(Phrase)
     counter = 0

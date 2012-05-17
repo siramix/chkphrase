@@ -96,10 +96,10 @@ chkphrase.addphrase.add = function () {
         difficulty_val,
         pack_val,
         id;
-    category_val = $('#phrase_category_chooser').val();
-    genre_val = $('#phrase_genre_chooser').val();
-    difficulty_val = $('#phrase_difficulty_chooser').val();
-    pack_val = $('#phrase_pack_chooser').val();
+    category_val = $('#addphrase_category_chooser').val();
+    genre_val = $('#addphrase_genre_chooser').val();
+    difficulty_val = $('#addphrase_difficulty_chooser').val();
+    pack_val = $('#addphrase_pack_chooser').val();
     phrase = $('#cur_add_phrase').val();
     params = {
         'phrase' : phrase,
@@ -108,16 +108,16 @@ chkphrase.addphrase.add = function () {
         'source' : 'custom'
     };
 
-    if (!category_val) {
+    if (category_val) {
         params.category_id = category_val;
     }
-    if (!genre_val) {
+    if (genre_val) {
         params.genre_id = genre_val;
     }
-    if (!difficulty_val) {
+    if (difficulty_val) {
         params.difficulty_id = difficulty_val;
     }
-    if (!pack_val) {
+    if (pack_val) {
         params.pack_id = pack_val;
     }
 
@@ -303,7 +303,7 @@ chkphrase.phrases.pageshow = function () {
                 chkphrase.phrases.pageshow();
             });
         }).removeClass('ui-btn-active');
-        $('#phrase_edit_button').unbind('click').click(function () {
+        $('#phrase_skip_button').unbind('click').click(function () {
             chkphrase.phrases.pageshow();
         }).removeClass('ui-btn-active');
         $.mobile.hidePageLoadingMsg();
