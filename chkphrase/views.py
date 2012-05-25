@@ -18,7 +18,7 @@ from chkphrase import app
 from chkphrase import auth
 from chkphrase import conf
 import chkphrase.database as db
-from chkphrase.models import User, Category, PreCategory, Genre, Difficulty, Pack, Phrase
+from chkphrase.models import User, Category, PreCategory, Genre, Difficulty, Pack, Phrase, Badword
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.sql.expression import func
 from flask import Flask, request, jsonify, abort, render_template, redirect, make_response
@@ -678,6 +678,7 @@ def phrases():
     probably die once there is a very large database."""
     session = db.db_session()
     res = dict()
+    offset = 0
     if request.args.has_key('count') and request.args.has_key('offset'):
         count = int(request.args['count'])
         offset = int(request.args['offset'])
@@ -886,3 +887,107 @@ def random_phrase():
     finally:
         session.close()
     return redirect("%s/phrases/%d" % (conf.app_root, cur_phrase.id), 301)
+
+@app.route('/badwords/add', methods = ['POST'])
+@auth.requires_auth
+def add_badword():
+    session = db.db_session()
+    word = request.form['word']
+    phrase_id = request.form['phrase_id']
+    new_badword = Badword(word, phrase_id)
+    session.add(new_badword)
+    res = dict()
+    try:
+        session.commit()
+        res['id'] = new_badword.id
+        res['word'] = new_badword.word
+        res['phrase_id'] = new_badword.phrase_id
+    except IntegrityError:
+        session.rollback()
+        abort(400)
+    finally:
+        session.close()
+    return jsonify(res)
+
+@app.route('/badwords/get/<int:badword_id>', methods=['GET'])
+@auth.requires_auth
+def get_badword(badword_id = None):
+    """Edit a badword based on the POST parameters and return a json-encoded
+    result."""
+    session = db.db_session()
+    query = session.query(Badword).filter(Badword.id==badword_id)
+    try:
+        cur_badword = query[0]
+    except IndexError:
+        session.close()
+        abort(404)
+    res = dict()
+    res['id'] =  cur_badword.id
+    res['word'] = cur_badword.word
+    res['phrase_id'] = cur_badword.phrase_id
+    session.close()
+    return jsonify(res)
+
+@app.route('/badwords/edit/<int:badword_id>', methods=['POST'])
+@auth.requires_auth
+def edit_badword(badword_id = None):
+    """Edit a badword based on the POST parameters and return a json-encoded
+    result."""
+    session = db.db_session()
+    query = session.query(Badword).filter(Badword.id==badword_id)
+    badword_data = request.form
+    try:
+        cur_badword = query[0]
+    except IndexError:
+        session.close()
+        abort(404)
+    res = dict()
+    res['word'] = badword_data['word']
+    try:
+        query.update(res)
+        res['id'] =  cur_badword.id
+        res['phrase_id'] = cur_badword.phrase_id
+        session.commit()
+    except IntegrityError:
+        session.rollback()
+        abort(400)
+    finally:
+        session.close()
+    return jsonify(res)
+
+@app.route('/badwords/delete/<int:badword_id>', methods=['POST'])
+@auth.requires_auth
+def delete_badword(badword_id = None):
+    """Delete a bad word identified by the given id and return the former bad word."""
+    session = db.db_session()
+    query = session.query(Badword).filter(Badword.id==badword_id)
+    try:
+        cur_badword = query[0]
+    except IndexError:
+        session.close()
+        abort(404)
+    word = cur_badword.word
+    session.delete(cur_badword)
+    session.commit()
+    session.close()
+    return jsonify(word=word)
+
+@app.route('/badwords/forphrase/<int:phrase_id>')
+@auth.requires_auth
+def get_badwords_for_phrase(phrase_id = None):
+    """
+    Return the bad words corresponding to a given phrase.
+    """
+    #TODO
+    session = db.db_session()
+    query = session.query(Badword).filter(Badword.phrase_id==phrase_id)
+    res = dict()
+    count = 0
+    for cur_badword in query:
+        res[count] = dict()
+        res[count]['id'] = cur_badword.id
+        res[count]['word'] = cur_badword.word
+        res[count]['phrase_id'] = cur_badword.phrase_id
+        count += 1
+    session.close()
+    return jsonify(res)

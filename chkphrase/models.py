@@ -78,6 +78,24 @@ class Pack(Base):
     def __repr__(self):
         return '<Pack %r>' % (self.name)
 
+class Badword(Base):
+    """
+    There are five bad words associated with each 'phrase', for buzzowrds a
+    phrase is actually just a word.
+    """
+
+    __tablename__ = 'badwords'
+    id = Column(Integer, primary_key=True)
+    phrase_id = Column(Integer, ForeignKey('phrases.id'))
+    word = Column(Unicode(255))
+    
+    def __init__(self, word=None, phrase_id=None):
+        """
+        Standard constructor for creating a bad word.
+        """
+        self.word = word
+        self.phrase_id = phrase_id
+
 class Phrase(Base):
     
     __tablename__ = 'phrases'
@@ -99,6 +117,7 @@ class Phrase(Base):
     category = relationship('Category', backref='categories')
     difficulty = relationship('Difficulty', backref='difficulties')
     pack = relationship('Pack', backref='packs')
+    badwords = relationship('Badword', backref='badwords')
     
     def __init__(self, phrase=None, source=None):
         self.phrase = phrase
