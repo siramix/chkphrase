@@ -111,6 +111,15 @@ class Phrase(Base):
     approved = Column(Integer, default=0)
     buzzworthy = Column(Integer, default=0)
 
+    # -1 do not use
+    #  0 in the database
+    #  1 has been approved (needs bad words)
+    #  2 has bad words (need to be verified)
+    #  3 needs further verification
+    #  4 ready for a pack
+    #  5 in a shippable pack
+    stage = Column(Integer, default=0)
+
     user = relationship('User', backref='users')
     pre_category = relationship('PreCategory', backref='precategories')
     genre = relationship('Genre', backref='genres')

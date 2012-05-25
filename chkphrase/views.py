@@ -978,7 +978,6 @@ def get_badwords_for_phrase(phrase_id = None):
     """
     Return the bad words corresponding to a given phrase.
     """
-    #TODO
     session = db.db_session()
     query = session.query(Badword).filter(Badword.phrase_id==phrase_id)
     res = dict()
