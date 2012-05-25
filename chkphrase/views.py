@@ -770,6 +770,8 @@ def add_phrase():
     new_phrase = Phrase(cur_phrase['phrase'])
     for key, value in cur_phrase.items():
         setattr(new_phrase, key, value)
+    query = session.query(User).filter(User.name==request.authorization.username)
+    new_phrase.user_id = query[0].id
     session.add(new_phrase)
     try:
         session.commit()
@@ -800,6 +802,8 @@ def edit_phrase(phrase_id = None):
             setattr(cur_phrase, key, None)
         else:
             setattr(cur_phrase, key, value)
+    query = session.query(User).filter(User.name==request.authorization.username)
+    cur_phrase.user_id = query[0].id
     session.add(cur_phrase)
     try:
         session.commit()
@@ -990,3 +994,18 @@ def get_badwords_for_phrase(phrase_id = None):
         count += 1
     session.close()
     return jsonify(res)
+
+@app.route('/phrases/random/buzzworthy')
+@auth.requires_auth
+def phrases_random_buzzworthy():
+    """Return a json-encoded list of buzzworthy phrases. This is going to choke and
+    probably die once there is a very large database."""
+    session = db.db_session()
+    query = session.query(Phrase).filter(Phrase.buzzworthy==1).order_by(func.random()).limit(1)
+    try:
+        cur_phrase = query[0]
+    except IndexError:
+        abort(404)
+    finally:
+        session.close()
+    return redirect("%s/phrases/%d" % (conf.app_root, cur_phrase.id), 301)
