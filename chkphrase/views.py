@@ -833,6 +833,19 @@ def delete_phrase(phrase_id = None):
     session.close()
     return jsonify(phrase=str_phrase)
 
+@app.route('/phrases/counts/per_user')
+@auth.requires_auth
+def count_phrases_per_user():
+    """Count all of the phrases in the database on a per-user basis."""
+    ret = dict()
+    session = db.db_session()
+    query = session.query(User)
+    for cur_user in query:
+        num = session.query(Phrase).filter(Phrase.user_id==cur_user.id).count()
+        ret[cur_user.name] = num
+    session.close()
+    return jsonify(ret)
+
 @app.route('/phrases/count')
 @auth.requires_auth
 def count_phrases():

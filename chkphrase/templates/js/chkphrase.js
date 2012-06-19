@@ -82,6 +82,15 @@ chkphrase.main.pageshow = function () {
     $.getJSON('{{app_root}}/phrases/count/unseen', function (data) {
         $('#phrase_unseen_count').html(data.count);
     });
+    $.getJSON('{{app_root}}/phrases/counts/per_user', function (data) {
+        var user;
+        $('.user_count').remove();
+        for (user in data) {
+            if (data.hasOwnProperty(user)) {
+                $('#phrase_count').append('<span class="user_count count_container"><span>' + user + ':&nbsp;</span>' + '<span>' + data[user] + '</span></span>');
+            }
+        }
+    });
 };
 
 // Add Phrase -----------------------------------------------------------------
@@ -136,7 +145,6 @@ chkphrase.addphrase.pageshow = function () {
         difficulty_chooser,
         pack_chooser,
         precategory_div;
-    $.mobile.showPageLoadingMsg();
     category_chooser = $('#addphrase_category_chooser');
     genre_chooser = $('#addphrase_genre_chooser');
     difficulty_chooser = $('#addphrase_difficulty_chooser');
@@ -166,7 +174,6 @@ chkphrase.addphrase.pageshow = function () {
             $('#cur_add_phrase').val('');
             $('#addphrase').trigger('pageshow');
         }).removeClass('ui-btn-active');
-        $.mobile.hidePageLoadingMsg();
     });
 };
 
@@ -251,7 +258,6 @@ chkphrase.phrases.pageshow = function () {
         difficulty_chooser,
         pack_chooser,
         precategory_div;
-    $.mobile.showPageLoadingMsg();
     precategory_div = $('#precategory');
     category_chooser = $('#phrase_category_chooser');
     genre_chooser = $('#phrase_genre_chooser');
@@ -306,7 +312,83 @@ chkphrase.phrases.pageshow = function () {
         $('#phrase_skip_button').unbind('click').click(function () {
             chkphrase.phrases.pageshow();
         }).removeClass('ui-btn-active');
-        $.mobile.hidePageLoadingMsg();
+    });
+};
+
+// Add Bad Words --------------------------------------------------------------
+chkphrase.addbadwords = chkphrase.addbadwords || {};
+
+chkphrase.addbadwords.create_delete = function (cur_element, cur_index) {
+    'use strict';
+    return function () {
+        var ret;
+        $.post('{{app_root}}/badwords/delete/' + cur_index,
+               null,
+               function (data) {},
+               'json');
+        cur_element.remove();
+        return ret;
+    };
+};
+
+chkphrase.addbadwords.add_badword = function (cur_word) {
+    'use strict';
+    var delete_button,
+        badword;
+    delete_button = $('<a href="#addbadwords" data-role="button" data-icon="delete" data-inline="true">Delete</a>');
+    badword = $('<div>' + cur_word.word + '</div>');
+    delete_button
+        .appendTo(badword)
+        .trigger('create')
+        .button()
+        .unbind('click').click(chkphrase.addbadwords.create_delete(badword, cur_word.id));
+    return badword;
+};
+
+chkphrase.addbadwords.get_bad_words = function (phrase_id) {
+    'use strict';
+    $.ajax({
+        'url' : '{{app_root}}/badwords/forphrase/' + phrase_id,
+        'success' : function (badwords) {
+            var index, cur_word;
+            for (index in badwords) {
+                if (badwords.hasOwnProperty(index)) {
+                    cur_word = chkphrase.addbadwords.add_badword(badwords[index]);
+                    $('#cur_bad_container').append(cur_word);
+                }
+            }
+        }
+    });
+};
+
+/**
+ * Shows the page for adding bad words to a buzzword
+ */
+chkphrase.addbadwords.pageshow = function () {
+    'use strict';
+    var cur_phrase;
+    $.ajax({
+        'url' : '{{app_root}}/phrases/random/buzzworthy',
+        'cache' : false,
+        'success' : function (phrase) {
+            chkphrase.phrases.cur_phrase = phrase;
+            chkphrase.addbadwords.get_bad_words(phrase.id);
+            $('#cur_word').html(phrase.phrase);
+            $('#phrase_source').html(phrase.source);
+
+            $('#addbadwords_add_button').unbind('click').click(function () {
+                var params = {};
+                params.word = $('#cur_bad_word').val();
+                params.phrase_id = phrase.id;
+                $.post('{{app_root}}/badwords/add',
+                       params,
+                       function (data) {
+                        var badword;
+                        badword = chkphrase.addbadwords.add_badword(data);
+                        $('#cur_bad_container').append(badword);
+                    });
+            });
+        }
     });
 };
 
@@ -629,6 +711,8 @@ $(document).bind('mobileinit', function () {
     $('#addphrase').live('pageshow', chkphrase.addphrase.pageshow);
 
     $('#phrases').live('pageshow', chkphrase.phrases.pageshow);
+
+    $('#addbadwords').live('pageshow', chkphrase.addbadwords.pageshow);
 
     $('#users').live('pageshow', chkphrase.users.pageshow);
     $('#user_dialog').live('pageshow', chkphrase.users.dialogshow);

@@ -29,6 +29,11 @@
         <ul data-role="listview" data-inset="true">
 	  <li><a href="#addphrase">Add Phrase</a></li>
 	  <li><a href="#phrases">Approve Phrases</a></li>
+          <li><a href="#addbadwords">Add Bad Words (1)</a></li>
+          <li><a href="#approveforbuzzwords">Approve for
+              Buzzwords (2)</a></li>
+          <li><a href="#investigationqueue">Buzzwords Needing
+              Love (3)</a></li>
 	  <li><a href="#users">Manage Users</a></li>
 	  <li><a href="#categories">Manage Categories</a></li>
 	  <li><a href="#precategories">Manage Pre-Categories</a></li>
@@ -164,6 +169,32 @@
             <option value="null">None Selected</option>
 	  </select>
 	</div>
+      </div><!-- /content -->
+    </div><!-- /page -->
+
+    <!-- Add Bad Words ------------------------------------------------------->
+    <div data-role="page" id="addbadwords">
+      <div data-role="header">
+        <a href="#main"
+           data-icon="home"
+           data-iconpos="notext"
+           data-direction="reverse" class="ui-btn-left jqm-home">Home</a>
+	<h1 class="title">Add Bad Words</h1>
+      </div><!-- /header -->
+      <div data-role="content">
+        <div id="cur_word" class="phrase"></div>
+        <div id="cur_bad_container" class="badwords"></div>
+        <input type="text" name="cur_bad_word" id="cur_bad_word" value="" />
+        <div data-role="fieldcontain" data-type="horizontal">
+          <a href="#addbadwords"
+             id="addbadwords_add_button"
+             data-role="button"
+             data-inline="true"
+             data-icon="plus"
+             data-rel="dialog">Add</a>
+          <div id="badword_container">
+          </div>
+        </div>
       </div><!-- /content -->
     </div><!-- /page -->
 
