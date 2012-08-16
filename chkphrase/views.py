@@ -962,6 +962,9 @@ def add_badword():
     word = request.form['word']
     phrase_id = request.form['phrase_id']
     new_badword = Badword(word, phrase_id)
+
+    query = session.query(User).filter(User.name == request.authorization.username)
+    new_badword.user_id = query[0].id
     session.add(new_badword)
     res = dict()
     try:
@@ -1012,6 +1015,8 @@ def edit_badword(badword_id=None):
         abort(404)
     res = dict()
     res['word'] = badword_data['word']
+    query = session.query(User).filter(User.name == request.authorization.username)
+    res['user_id'] = query[0].id
     try:
         query.update(res)
         res['id'] = cur_badword.id
@@ -1061,6 +1066,20 @@ def get_badwords_for_phrase(phrase_id=None):
         count += 1
     session.close()
     return jsonify(res)
+
+
+@app.route('/badwords/counts/per_user')
+@auth.requires_auth
+def count_badwords_per_user():
+    """Count all of the phrases in the database on a per-user basis."""
+    ret = dict()
+    session = db.db_session()
+    query = session.query(User)
+    for cur_user in query:
+        num = session.query(Badword).filter(Badword.user_id == cur_user.id).count()
+        ret[cur_user.name] = num
+    session.close()
+    return jsonify(ret)
 
 
 @app.route('/phrases/random/buzzworthy')

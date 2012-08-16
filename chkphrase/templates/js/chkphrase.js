@@ -3,7 +3,7 @@
  * to have a separate namespace for each page of the application. This assumes
  * that JQuery 1.6.4 has been included in the page prior to the inclusion of
  * this script.
- * 
+ *
  * IMPORTANT: JQuery Mobile 1.0.1 should be included AFTER this script.
  */
 
@@ -88,6 +88,15 @@ chkphrase.main.pageshow = function () {
         for (user in data) {
             if (data.hasOwnProperty(user)) {
                 $('#phrase_count').append('<span class="user_count count_container"><span>' + user + ':&nbsp;</span>' + '<span>' + data[user] + '</span></span>');
+            }
+        }
+    });
+    $.getJSON('{{app_root}}/badwords/counts/per_user', function (data) {
+        var user;
+        $('.user_badword_count').remove();
+        for (user in data) {
+            if (data.hasOwnProperty(user)) {
+                $('#phrase_count').append('<span class="user_badword_count count_container"><span>' + user + ' (bad words):&nbsp;</span>' + '<span>' + data[user] + '</span></span>');
             }
         }
     });

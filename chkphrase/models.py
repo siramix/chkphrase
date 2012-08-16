@@ -87,7 +87,7 @@ class Pack(Base):
 
 class Badword(Base):
     """
-    There are five bad words associated with each 'phrase', for buzzowrds a
+    There are five bad words associated with each 'phrase', for buzzwords a
     phrase is actually just a word.
     """
 
@@ -95,6 +95,7 @@ class Badword(Base):
     id = Column(Integer, primary_key=True)
     phrase_id = Column(Integer, ForeignKey('phrases.id'))
     word = Column(Unicode(255))
+    user_id = Column(Integer, ForeignKey('users.id'))
 
     def __init__(self, word=None, phrase_id=None):
         """
@@ -119,6 +120,7 @@ class Phrase(Base):
     approved = Column(Integer, default=0)
     buzzworthy = Column(Integer, default=0)
 
+    # -2 rejected during bad word addition
     # -1 do not use
     #  0 in the database
     #  1 has been approved (needs bad words)
