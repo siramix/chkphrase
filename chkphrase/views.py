@@ -1088,7 +1088,7 @@ def phrases_random_buzzworthy():
     """Return a json-encoded list of buzzworthy phrases. This is going to choke and
     probably die once there is a very large database."""
     session = db.db_session()
-    query = session.query(Phrase).filter(Phrase.buzzworthy == 1).order_by(func.random()).limit(1)
+    query = session.query(Phrase).filter(Phrase.buzzworthy == 1).filter(Phrase.stage == 1).order_by(func.random()).limit(1)
     try:
         cur_phrase = query[0]
     except IndexError:

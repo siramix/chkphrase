@@ -193,7 +193,7 @@ chkphrase.phrases.cur_phrase = chkphrase.phrases.cur_phrase || {};
 /**
  * Sets the phrase data for an approved word.  In the process this
  * rejects the word from Buzzwords as we don't want to reuse the
- * same words, i.e. a phrase can only be Approved for Phrasecraze 
+ * same words, i.e. a phrase can only be Approved for Phrasecraze
  * or Buzzworthy
  */
 chkphrase.phrases.approve = function (approval) {
@@ -224,7 +224,7 @@ chkphrase.phrases.approve = function (approval) {
 
 /**
  * Sets the phrase data for a word that we might want to use
- * for Buzzwords, rejecting the word for phrasecraze.  
+ * for Buzzwords, rejecting the word for phrasecraze.
  * Phrase state after function:
  *   Approval: -1
  *   Buzzworthy: 1
@@ -246,6 +246,7 @@ chkphrase.phrases.setbuzzworthy = function (buzzworthy) {
         'phrase' : chkphrase.phrases.cur_phrase.phrase,
         'approved' : -1,
         'buzzworthy' : buzzworthy,
+        'stage' : 1,
         'category_id' : category_val,
         'genre_id' : genre_val,
         'difficulty_id' : difficulty_val,
@@ -359,6 +360,7 @@ chkphrase.addbadwords.get_bad_words = function (phrase_id) {
     $.ajax({
         'url' : '{{app_root}}/badwords/forphrase/' + phrase_id,
         'success' : function (badwords) {
+            $('#cur_bad_container').empty();
             var index, cur_word;
             for (index in badwords) {
                 if (badwords.hasOwnProperty(index)) {
@@ -385,6 +387,25 @@ chkphrase.addbadwords.pageshow = function () {
             $('#cur_word').html(phrase.phrase);
             $('#phrase_source').html(phrase.source);
 
+            $('#addbadwords_reject_button').unbind('click').click( function () {
+                var id,
+                    params = {};
+                id = chkphrase.phrases.cur_phrase.id;
+                params['stage'] = -1;
+                $.post('{{app_root}}/phrases/edit/' + id, params);
+                $('#addbadwords').trigger('pageshow');
+            }).removeClass('ui-btn-active');
+
+            $('#addbadwords_complete_button').unbind('click').click( function () {
+                var id,
+                    params = {};
+                id = chkphrase.phrases.cur_phrase.id;
+                params['stage'] = 2;
+                $.post('{{app_root}}/phrases/edit/' + id, params);
+                $('#addbadwords').trigger('pageshow');
+                $(this).removeClass('ui-btn-active');
+            }).removeClass('ui-btn-active');
+
             $('#addbadwords_add_button').unbind('click').click(function () {
                 var params = {};
                 params.word = $('#cur_bad_word').val();
@@ -396,7 +417,7 @@ chkphrase.addbadwords.pageshow = function () {
                         badword = chkphrase.addbadwords.add_badword(data);
                         $('#cur_bad_container').append(badword);
                     });
-            });
+            }).removeClass('ui-btn-active');
         }
     });
 };

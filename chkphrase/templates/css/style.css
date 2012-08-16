@@ -5,7 +5,7 @@ h1.title {
     margin: 4px !important;
 }
 
-div.phrase {
+.phrase {
     font-family: 'Francois One', sans-serif;
     font-size: 32px;
     padding-top: 10px;
@@ -64,7 +64,7 @@ span.count_container {
     background: url('{{app_root}}/images/ajax-loader-small.gif') no-repeat center left;
 }
 
-div.badwords div {
+.badwords div {
     font-family: 'Anton', Arial, serif;
     font-weight: 400;
     font-size: 20px;

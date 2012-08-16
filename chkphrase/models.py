@@ -120,7 +120,6 @@ class Phrase(Base):
     approved = Column(Integer, default=0)
     buzzworthy = Column(Integer, default=0)
 
-    # -2 rejected during bad word addition
     # -1 do not use
     #  0 in the database
     #  1 has been approved (needs bad words)
