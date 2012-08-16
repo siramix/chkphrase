@@ -4,9 +4,10 @@ of phrases.
 """
 import hashlib
 from sqlalchemy import Column, Integer, String, Unicode, ForeignKey
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy.orm import relationship
 
 from chkphrase.database import Base
+
 
 class User(Base):
     __tablename__ = 'users'
@@ -22,7 +23,8 @@ class User(Base):
 
     def __repr__(self):
         return '<User %r>' % (self.name)
-    
+
+
 class Category(Base):
     __tablename__ = 'categories'
     id = Column(Integer, primary_key=True)
@@ -33,6 +35,7 @@ class Category(Base):
 
     def __repr__(self):
         return '<Category %r>' % (self.name)
+
 
 class PreCategory(Base):
     __tablename__ = 'precategories'
@@ -45,6 +48,7 @@ class PreCategory(Base):
     def __repr__(self):
         return '<PreCategory %r>' % (self.name)
 
+
 class Genre(Base):
     __tablename__ = 'genres'
     id = Column(Integer, primary_key=True)
@@ -55,6 +59,7 @@ class Genre(Base):
 
     def __repr__(self):
         return '<Genre %r>' % (self.name)
+
 
 class Difficulty(Base):
     __tablename__ = 'difficulties'
@@ -67,6 +72,7 @@ class Difficulty(Base):
     def __repr__(self):
         return '<Difficulty %r>' % (self.name)
 
+
 class Pack(Base):
     __tablename__ = 'packs'
     id = Column(Integer, primary_key=True)
@@ -78,6 +84,7 @@ class Pack(Base):
     def __repr__(self):
         return '<Pack %r>' % (self.name)
 
+
 class Badword(Base):
     """
     There are five bad words associated with each 'phrase', for buzzowrds a
@@ -88,7 +95,7 @@ class Badword(Base):
     id = Column(Integer, primary_key=True)
     phrase_id = Column(Integer, ForeignKey('phrases.id'))
     word = Column(Unicode(255))
-    
+
     def __init__(self, word=None, phrase_id=None):
         """
         Standard constructor for creating a bad word.
@@ -96,8 +103,9 @@ class Badword(Base):
         self.word = word
         self.phrase_id = phrase_id
 
+
 class Phrase(Base):
-    
+
     __tablename__ = 'phrases'
     id = Column(Integer, primary_key=True)
     phrase = Column(Unicode(255), unique=True)
@@ -107,7 +115,7 @@ class Phrase(Base):
     genre_id = Column(Integer, ForeignKey('genres.id'))
     category_id = Column(Integer, ForeignKey('categories.id'))
     difficulty_id = Column(Integer, ForeignKey('difficulties.id'))
-    pack_id  = Column(Integer, ForeignKey('packs.id'))
+    pack_id = Column(Integer, ForeignKey('packs.id'))
     approved = Column(Integer, default=0)
     buzzworthy = Column(Integer, default=0)
 
@@ -127,7 +135,7 @@ class Phrase(Base):
     difficulty = relationship('Difficulty', backref='difficulties')
     pack = relationship('Pack', backref='packs')
     badwords = relationship('Badword', backref='badwords')
-    
+
     def __init__(self, phrase=None, source=None):
         self.phrase = phrase
         self.source = source

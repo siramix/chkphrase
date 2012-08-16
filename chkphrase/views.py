@@ -21,8 +21,9 @@ import chkphrase.database as db
 from chkphrase.models import User, Category, PreCategory, Genre, Difficulty, Pack, Phrase, Badword
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.sql.expression import func
-from flask import Flask, request, jsonify, abort, render_template, redirect, make_response
+from flask import request, jsonify, abort, render_template, redirect, make_response
 import hashlib
+
 
 @app.route('/')
 @auth.requires_auth
@@ -31,11 +32,13 @@ def index():
     cur_user = request.authorization.username
     return render_template('index.html', user=cur_user, app_root=conf.app_root)
 
+
 @app.route('/grid.html')
 @auth.requires_auth
 def grid():
     """Render the grid page."""
     return render_template('grid.html', app_root=conf.app_root)
+
 
 @app.route('/css/<stylesheet>')
 def css(stylesheet):
@@ -45,6 +48,7 @@ def css(stylesheet):
     ret.data = render_template('css/' + stylesheet, app_root=conf.app_root)
     return ret
 
+
 @app.route('/js/<script>')
 def js(script):
     """Render the javascript with the application root."""
@@ -52,6 +56,7 @@ def js(script):
     ret.mimetype = 'application/javascript'
     ret.data = render_template('js/' + script, app_root=conf.app_root)
     return ret
+
 
 @app.route('/images/<image>')
 @app.route('/css/images/<image>')
@@ -61,6 +66,7 @@ def images(image):
     ret.mimetype = 'image/' + image.split('.')[-1]
     ret.data = open('chkphrase/templates/images/' + image).read()
     return ret
+
 
 @app.route('/users')
 @auth.requires_auth
@@ -79,12 +85,13 @@ def users():
     session.close()
     return jsonify(res)
 
+
 @app.route('/users/<int:user_id>')
 @auth.requires_auth
-def user(user_id = None):
+def user(user_id=None):
     """Output a json-encoded user corresponding to user_id."""
     session = db.db_session()
-    query = session.query(User).filter(User.id==user_id)
+    query = session.query(User).filter(User.id == user_id)
     try:
         cur_user = query[0]
     except IndexError:
@@ -95,6 +102,7 @@ def user(user_id = None):
     res['full_name'] = cur_user.full_name
     session.close()
     return jsonify(res)
+
 
 @app.route('/users/add', methods=['POST'])
 @auth.requires_auth
@@ -118,13 +126,14 @@ def add_user():
                    name=new_user.name,
                    full_name=new_user.full_name)
 
+
 @app.route('/users/edit/<int:user_id>', methods=['POST'])
 @auth.requires_auth
-def edit_user(user_id = None):
+def edit_user(user_id=None):
     """Update a user based on the post parameters given and output a
     json-encoded user with the new attributes."""
     session = db.db_session()
-    query = session.query(User).filter(User.id==user_id)
+    query = session.query(User).filter(User.id == user_id)
     user_data = request.form
     try:
         cur_user = query[0]
@@ -136,7 +145,7 @@ def edit_user(user_id = None):
     res['full_name'] = user_data['full_name']
     res['password'] = hashlib.sha256(user_data['password']).hexdigest()
     query.update(res)
-    res['id'] =  cur_user.id
+    res['id'] = cur_user.id
     del res['password']
     try:
         session.commit()
@@ -147,12 +156,13 @@ def edit_user(user_id = None):
         session.close()
     return jsonify(res)
 
+
 @app.route('/users/delete/<int:user_id>', methods=['POST'])
 @auth.requires_auth
-def delete_user(user_id = None):
+def delete_user(user_id=None):
     """Delete a user with the specifed user_id and return the old name."""
     session = db.db_session()
-    query = session.query(User).filter(User.id==user_id)
+    query = session.query(User).filter(User.id == user_id)
     try:
         cur_user = query[0]
     except IndexError:
@@ -163,6 +173,7 @@ def delete_user(user_id = None):
     session.commit()
     session.close()
     return jsonify(name=name)
+
 
 @app.route('/categories')
 @auth.requires_auth
@@ -179,12 +190,13 @@ def categories():
     session.close()
     return jsonify(res)
 
+
 @app.route('/categories/<int:category_id>')
 @auth.requires_auth
-def category(category_id = None):
+def category(category_id=None):
     """Return a json-encoded category corresponding to category_id."""
     session = db.db_session()
-    query = session.query(Category).filter(Category.id==category_id)
+    query = session.query(Category).filter(Category.id == category_id)
     try:
         cur_category = query[0]
     except IndexError:
@@ -195,6 +207,7 @@ def category(category_id = None):
     res['id'] = cur_category.id
     res['name'] = cur_category.name
     return jsonify(res)
+
 
 @app.route('/categories/add', methods=['POST'])
 @auth.requires_auth
@@ -213,13 +226,14 @@ def add_category():
     return jsonify(id=new_category.id,
                    name=new_category.name)
 
+
 @app.route('/categories/edit/<int:category_id>', methods=['POST'])
 @auth.requires_auth
-def edit_category(category_id = None):
+def edit_category(category_id=None):
     """Edit a category based on the provided post parameters and return the
     json-encoded result."""
     session = db.db_session()
-    query = session.query(Category).filter(Category.id==category_id)
+    query = session.query(Category).filter(Category.id == category_id)
     category_data = request.form
     try:
         cur_category = query[0]
@@ -229,7 +243,7 @@ def edit_category(category_id = None):
     res = dict()
     res['name'] = category_data['name']
     query.update(res)
-    res['id'] =  cur_category.id
+    res['id'] = cur_category.id
     try:
         session.commit()
     except IntegrityError:
@@ -239,12 +253,13 @@ def edit_category(category_id = None):
         session.close()
     return jsonify(res)
 
+
 @app.route('/categories/delete/<int:category_id>', methods=['POST'])
 @auth.requires_auth
-def delete_category(category_id = None):
+def delete_category(category_id=None):
     """Delete a category based on category_id and return the old name."""
     session = db.db_session()
-    query = session.query(Category).filter(Category.id==category_id)
+    query = session.query(Category).filter(Category.id == category_id)
     try:
         cur_category = query[0]
     except IndexError:
@@ -255,6 +270,7 @@ def delete_category(category_id = None):
     session.commit()
     session.close()
     return jsonify(name=name)
+
 
 @app.route('/precategories')
 @auth.requires_auth
@@ -271,13 +287,13 @@ def precategories():
     session.close()
     return jsonify(res)
 
+
 @app.route('/precategories/<int:precategory_id>')
 @auth.requires_auth
-def precategory(precategory_id = None):
+def precategory(precategory_id=None):
     """Return a json-encoded pre-category identified by precategory_id."""
     session = db.db_session()
-    query = session.query(PreCategory).filter(PreCategory.id ==
-                                                    precategory_id)
+    query = session.query(PreCategory).filter(PreCategory.id == precategory_id)
     try:
         cur_precategory = query[0]
     except IndexError:
@@ -288,6 +304,7 @@ def precategory(precategory_id = None):
     res['id'] = cur_precategory.id
     res['name'] = cur_precategory.name
     return jsonify(res)
+
 
 @app.route('/precategories/add', methods=['POST'])
 @auth.requires_auth
@@ -308,9 +325,10 @@ def add_precategory():
     return jsonify(id=new_precategory.id,
                    name=new_precategory.name)
 
+
 @app.route('/precategories/edit/<int:precategory_id>', methods=['POST'])
 @auth.requires_auth
-def edit_precategory(precategory_id = None):
+def edit_precategory(precategory_id=None):
     """Edit a pre-category based on the provided post parameters and return
     the json-encoded result."""
     session = db.db_session()
@@ -325,7 +343,7 @@ def edit_precategory(precategory_id = None):
     res = dict()
     res['name'] = precategory_data['name']
     query.update(res)
-    res['id'] =  cur_precategory.id
+    res['id'] = cur_precategory.id
     try:
         session.commit()
     except IntegrityError:
@@ -335,9 +353,10 @@ def edit_precategory(precategory_id = None):
         session.close()
     return jsonify(res)
 
+
 @app.route('/precategories/delete/<int:precategory_id>', methods=['POST'])
 @auth.requires_auth
-def delete_precategory(precategory_id = None):
+def delete_precategory(precategory_id=None):
     """Delete a pre-category identified by precategory_id and return the former
     name."""
     session = db.db_session()
@@ -354,6 +373,7 @@ def delete_precategory(precategory_id = None):
     session.close()
     return jsonify(name=name)
 
+
 @app.route('/genres')
 @auth.requires_auth
 def genres():
@@ -369,12 +389,13 @@ def genres():
     session.close()
     return jsonify(res)
 
+
 @app.route('/genres/<int:genre_id>')
 @auth.requires_auth
-def genre(genre_id = None):
+def genre(genre_id=None):
     """Return a json-encoded genre identified by the given id."""
     session = db.db_session()
-    query = session.query(Genre).filter(Genre.id==genre_id)
+    query = session.query(Genre).filter(Genre.id == genre_id)
     try:
         cur_genre = query[0]
     except IndexError:
@@ -385,6 +406,7 @@ def genre(genre_id = None):
     res['name'] = cur_genre.name
     session.close()
     return jsonify(res)
+
 
 @app.route('/genres/add', methods=['POST'])
 @auth.requires_auth
@@ -404,13 +426,14 @@ def add_genre():
     return jsonify(id=new_genre.id,
                    name=new_genre.name)
 
+
 @app.route('/genres/edit/<int:genre_id>', methods=['POST'])
 @auth.requires_auth
-def edit_genre(genre_id = None):
+def edit_genre(genre_id=None):
     """Edit a genre based on the given post parameters and return the
     json-encoded result."""
     session = db.db_session()
-    query = session.query(Genre).filter(Genre.id==genre_id)
+    query = session.query(Genre).filter(Genre.id == genre_id)
     genre_data = request.form
     try:
         cur_genre = query[0]
@@ -420,7 +443,7 @@ def edit_genre(genre_id = None):
     res = dict()
     res['name'] = genre_data['name']
     query.update(res)
-    res['id'] =  cur_genre.id
+    res['id'] = cur_genre.id
     try:
         session.commit()
     except IntegrityError:
@@ -430,12 +453,13 @@ def edit_genre(genre_id = None):
         session.close()
     return jsonify(res)
 
+
 @app.route('/genres/delete/<int:genre_id>', methods=['POST'])
 @auth.requires_auth
-def delete_genre(genre_id = None):
+def delete_genre(genre_id=None):
     """Add a genre based on the given id and return the former name."""
     session = db.db_session()
-    query = session.query(Genre).filter(Genre.id==genre_id)
+    query = session.query(Genre).filter(Genre.id == genre_id)
     try:
         cur_genre = query[0]
     except IndexError:
@@ -446,6 +470,7 @@ def delete_genre(genre_id = None):
     session.commit()
     session.close()
     return jsonify(name=name)
+
 
 @app.route('/difficulties')
 @auth.requires_auth
@@ -462,12 +487,13 @@ def difficulties():
     session.close()
     return jsonify(res)
 
+
 @app.route('/difficulties/<int:difficulty_id>')
 @auth.requires_auth
-def difficulty(difficulty_id = None):
+def difficulty(difficulty_id=None):
     """Return a json-encoded difficulty identified by the given id."""
     session = db.db_session()
-    query = session.query(Difficulty).filter(Difficulty.id==difficulty_id)
+    query = session.query(Difficulty).filter(Difficulty.id == difficulty_id)
     try:
         cur_difficulty = query[0]
     except IndexError:
@@ -478,6 +504,7 @@ def difficulty(difficulty_id = None):
     res['name'] = cur_difficulty.name
     session.close()
     return jsonify(res)
+
 
 @app.route('/difficulties/add', methods=['POST'])
 @auth.requires_auth
@@ -498,13 +525,14 @@ def add_difficulty():
     return jsonify(id=new_difficulty.id,
                    name=new_difficulty.name)
 
+
 @app.route('/difficulties/edit/<int:difficulty_id>', methods=['POST'])
 @auth.requires_auth
-def edit_difficulty(difficulty_id = None):
+def edit_difficulty(difficulty_id=None):
     """Edit a difficulty based on the given POST parameter and return a
     json-encoded result."""
     session = db.db_session()
-    query = session.query(Difficulty).filter(Difficulty.id==difficulty_id)
+    query = session.query(Difficulty).filter(Difficulty.id == difficulty_id)
     difficulty_data = request.form
     try:
         cur_difficulty = query[0]
@@ -514,7 +542,7 @@ def edit_difficulty(difficulty_id = None):
     res = dict()
     res['name'] = difficulty_data['name']
     query.update(res)
-    res['id'] =  cur_difficulty.id
+    res['id'] = cur_difficulty.id
     try:
         session.commit()
     except IntegrityError:
@@ -524,12 +552,13 @@ def edit_difficulty(difficulty_id = None):
         session.close()
     return jsonify(res)
 
+
 @app.route('/difficulties/delete/<int:difficulty_id>', methods=['POST'])
 @auth.requires_auth
-def delete_difficulty(difficulty_id = None):
+def delete_difficulty(difficulty_id=None):
     """Delete a difficulty based on the given id and return the former name."""
     session = db.db_session()
-    query = session.query(Difficulty).filter(Difficulty.id==difficulty_id)
+    query = session.query(Difficulty).filter(Difficulty.id == difficulty_id)
     try:
         cur_difficulty = query[0]
     except IndexError:
@@ -540,6 +569,7 @@ def delete_difficulty(difficulty_id = None):
     session.commit()
     session.close()
     return jsonify(name=name)
+
 
 @app.route('/packs')
 @auth.requires_auth
@@ -556,12 +586,13 @@ def packs():
     session.close()
     return jsonify(res)
 
+
 @app.route('/packs/<int:pack_id>')
 @auth.requires_auth
-def pack(pack_id = None):
+def pack(pack_id=None):
     """Return a json-encoded pack based on the provided id."""
     session = db.db_session()
-    query = session.query(Pack).filter(Pack.id==pack_id)
+    query = session.query(Pack).filter(Pack.id == pack_id)
     try:
         cur_pack = query[0]
     except IndexError:
@@ -572,6 +603,7 @@ def pack(pack_id = None):
     res['name'] = cur_pack.name
     session.close()
     return jsonify(res)
+
 
 @app.route('/packs/add', methods=['POST'])
 @auth.requires_auth
@@ -592,13 +624,14 @@ def add_pack():
     return jsonify(id=new_pack.id,
                    name=new_pack.name)
 
+
 @app.route('/packs/edit/<int:pack_id>', methods=['POST'])
 @auth.requires_auth
-def edit_pack(pack_id = None):
+def edit_pack(pack_id=None):
     """Edit a pack based on the POST parameters and return a json-encoded
     result."""
     session = db.db_session()
-    query = session.query(Pack).filter(Pack.id==pack_id)
+    query = session.query(Pack).filter(Pack.id == pack_id)
     pack_data = request.form
     try:
         cur_pack = query[0]
@@ -608,7 +641,7 @@ def edit_pack(pack_id = None):
     res = dict()
     res['name'] = pack_data['name']
     query.update(res)
-    res['id'] =  cur_pack.id
+    res['id'] = cur_pack.id
     try:
         session.commit()
     except IntegrityError:
@@ -618,12 +651,13 @@ def edit_pack(pack_id = None):
         session.close()
     return jsonify(res)
 
+
 @app.route('/packs/delete/<int:pack_id>', methods=['POST'])
 @auth.requires_auth
-def delete_pack(pack_id = None):
+def delete_pack(pack_id=None):
     """Delete a pack identified by the given id and return the former name."""
     session = db.db_session()
-    query = session.query(Pack).filter(Pack.id==pack_id)
+    query = session.query(Pack).filter(Pack.id == pack_id)
     try:
         cur_pack = query[0]
     except IndexError:
@@ -634,6 +668,7 @@ def delete_pack(pack_id = None):
     session.commit()
     session.close()
     return jsonify(name=name)
+
 
 def _phrase_to_dict(cur_phrase):
     """Helper function for outputing phrases. The structure of these nested
@@ -671,6 +706,7 @@ def _phrase_to_dict(cur_phrase):
         cur_res['pack']['name'] = cur_phrase.pack.name
     return cur_res
 
+
 @app.route('/phrases')
 @auth.requires_auth
 def phrases():
@@ -679,21 +715,22 @@ def phrases():
     session = db.db_session()
     res = dict()
     offset = 0
-    if request.args.has_key('count') and request.args.has_key('offset'):
+    if 'count' in request.args and 'offset' in request.args:
         count = int(request.args['count'])
         offset = int(request.args['offset'])
-        query = session.query(Phrase)[offset:offset+count]
+        query = session.query(Phrase)[offset:offset + count]
     else:
         query = session.query(Phrase)
     counter = 0
     for cur_phrase in query:
         cur_res = _phrase_to_dict(cur_phrase)
-        res[offset+counter] = cur_res
+        res[offset + counter] = cur_res
         counter += 1
     res['count'] = counter
     res['total'] = session.query(Phrase).count()
     session.close()
     return jsonify(res)
+
 
 @app.route('/phrases/approved')
 @auth.requires_auth
@@ -702,12 +739,12 @@ def phrases_approved():
     probably die once there is a very large database."""
     session = db.db_session()
     res = dict()
-    if request.args.has_key('count') and request.args.has_key('offset'):
+    if 'count' in request.args and 'offset' in request.args:
         count = request.args['count']
         offset = request.args['offset']
-        query = session.query(Phrase).filter(Phrase.approved==1)[offset:offset+count]
+        query = session.query(Phrase).filter(Phrase.approved == 1)[offset:offset + count]
     else:
-        query = session.query(Phrase).filter(Phrase.approved==1)
+        query = session.query(Phrase).filter(Phrase.approved == 1)
     out = ''
     for cur_phrase in query:
         cur_res = _phrase_to_dict(cur_phrase)
@@ -721,6 +758,7 @@ def phrases_approved():
     ret.mimetype = 'application/json'
     ret.data = out
     return ret
+
 
 @app.route('/phrases/buzzworthy')
 @auth.requires_auth
@@ -729,7 +767,7 @@ def phrases_buzzworthy():
     probably die once there is a very large database."""
     session = db.db_session()
     res = dict()
-    query = session.query(Phrase).filter(Phrase.buzzworthy==1)
+    query = session.query(Phrase).filter(Phrase.buzzworthy == 1)
     out = ''
     for cur_phrase in query:
         cur_res = _phrase_to_dict(cur_phrase)
@@ -744,12 +782,13 @@ def phrases_buzzworthy():
     ret.data = out
     return ret
 
+
 @app.route('/phrases/<int:phrase_id>')
 @auth.requires_auth
-def phrase(phrase_id = None):
+def phrase(phrase_id=None):
     """Return a json-encoded phrase identified by the provided id."""
     session = db.db_session()
-    query = session.query(Phrase).filter(Phrase.id==phrase_id)
+    query = session.query(Phrase).filter(Phrase.id == phrase_id)
     try:
         cur_phrase = query[0]
     except IndexError:
@@ -758,6 +797,7 @@ def phrase(phrase_id = None):
     res = _phrase_to_dict(cur_phrase)
     session.close()
     return jsonify(res)
+
 
 @app.route('/phrases/add', methods=['POST'])
 @auth.requires_auth
@@ -770,7 +810,7 @@ def add_phrase():
     new_phrase = Phrase(cur_phrase['phrase'])
     for key, value in cur_phrase.items():
         setattr(new_phrase, key, value)
-    query = session.query(User).filter(User.name==request.authorization.username)
+    query = session.query(User).filter(User.name == request.authorization.username)
     new_phrase.user_id = query[0].id
     session.add(new_phrase)
     try:
@@ -783,14 +823,15 @@ def add_phrase():
     session.close()
     return jsonify(res)
 
+
 @app.route('/phrases/edit/<int:phrase_id>', methods=['POST'])
 @auth.requires_auth
-def edit_phrase(phrase_id = None):
+def edit_phrase(phrase_id=None):
     """Edit a phrase based on the given post parameters. This function does its
     best to cope with null parameters to categories, precategories, genres,
     etc. To remove associations, pass 'null' as that parameter via POST."""
     session = db.db_session()
-    query = session.query(Phrase).filter(Phrase.id==phrase_id)
+    query = session.query(Phrase).filter(Phrase.id == phrase_id)
     phrase_data = request.form
     try:
         cur_phrase = query[0]
@@ -802,7 +843,7 @@ def edit_phrase(phrase_id = None):
             setattr(cur_phrase, key, None)
         else:
             setattr(cur_phrase, key, value)
-    query = session.query(User).filter(User.name==request.authorization.username)
+    query = session.query(User).filter(User.name == request.authorization.username)
     cur_phrase.user_id = query[0].id
     session.add(cur_phrase)
     try:
@@ -815,13 +856,14 @@ def edit_phrase(phrase_id = None):
     session.close()
     return jsonify(res)
 
+
 @app.route('/phrases/delete/<int:phrase_id>', methods=['POST'])
 @auth.requires_auth
-def delete_phrase(phrase_id = None):
+def delete_phrase(phrase_id=None):
     """Delete a phrase identified by the given id and return the former
     phrase."""
     session = db.db_session()
-    query = session.query(Phrase).filter(Phrase.id==phrase_id)
+    query = session.query(Phrase).filter(Phrase.id == phrase_id)
     try:
         cur_phrase = query[0]
     except IndexError:
@@ -833,6 +875,7 @@ def delete_phrase(phrase_id = None):
     session.close()
     return jsonify(phrase=str_phrase)
 
+
 @app.route('/phrases/counts/per_user')
 @auth.requires_auth
 def count_phrases_per_user():
@@ -841,10 +884,11 @@ def count_phrases_per_user():
     session = db.db_session()
     query = session.query(User)
     for cur_user in query:
-        num = session.query(Phrase).filter(Phrase.user_id==cur_user.id).count()
+        num = session.query(Phrase).filter(Phrase.user_id == cur_user.id).count()
         ret[cur_user.name] = num
     session.close()
     return jsonify(ret)
+
 
 @app.route('/phrases/count')
 @auth.requires_auth
@@ -855,48 +899,53 @@ def count_phrases():
     session.close()
     return jsonify(count=count)
 
+
 @app.route('/phrases/count/approved')
 @auth.requires_auth
 def count_approved_phrases():
     """Count all of the phrases in the database."""
     session = db.db_session()
-    count = session.query(Phrase).filter(Phrase.approved==1).count()
+    count = session.query(Phrase).filter(Phrase.approved == 1).count()
     session.close()
     return jsonify(count=count)
+
 
 @app.route('/phrases/count/buzzworthy')
 @auth.requires_auth
 def count_buzzworthy_phrases():
     """Count all of the phrases in the database."""
     session = db.db_session()
-    count = session.query(Phrase).filter(Phrase.buzzworthy==1).count()
+    count = session.query(Phrase).filter(Phrase.buzzworthy == 1).count()
     session.close()
     return jsonify(count=count)
+
 
 @app.route('/phrases/count/rejected')
 @auth.requires_auth
 def count_rejected_phrases():
     """Count all of the phrases in the database."""
     session = db.db_session()
-    count = session.query(Phrase).filter(Phrase.approved==-1).filter(Phrase.buzzworthy==-1).count()
+    count = session.query(Phrase).filter(Phrase.approved == -1).filter(Phrase.buzzworthy == -1).count()
     session.close()
     return jsonify(count=count)
+
 
 @app.route('/phrases/count/unseen')
 @auth.requires_auth
 def count_unseen_phrases():
     """Count all of the phrases in the database."""
     session = db.db_session()
-    count = session.query(Phrase).filter(Phrase.approved==0).count()
+    count = session.query(Phrase).filter(Phrase.approved == 0).count()
     session.close()
     return jsonify(count=count)
+
 
 @app.route('/phrases/random/unapproved')
 @auth.requires_auth
 def random_phrase():
     """Redirect to a random phrase."""
     session = db.db_session()
-    query = session.query(Phrase).filter(Phrase.approved==0).order_by(func.random()).limit(1)
+    query = session.query(Phrase).filter(Phrase.approved == 0).order_by(func.random()).limit(1)
     try:
         cur_phrase = query[0]
     except IndexError:
@@ -905,7 +954,8 @@ def random_phrase():
         session.close()
     return redirect("%s/phrases/%d" % (conf.app_root, cur_phrase.id), 301)
 
-@app.route('/badwords/add', methods = ['POST'])
+
+@app.route('/badwords/add', methods=['POST'])
 @auth.requires_auth
 def add_badword():
     session = db.db_session()
@@ -926,32 +976,34 @@ def add_badword():
         session.close()
     return jsonify(res)
 
+
 @app.route('/badwords/get/<int:badword_id>', methods=['GET'])
 @auth.requires_auth
-def get_badword(badword_id = None):
+def get_badword(badword_id=None):
     """Edit a badword based on the POST parameters and return a json-encoded
     result."""
     session = db.db_session()
-    query = session.query(Badword).filter(Badword.id==badword_id)
+    query = session.query(Badword).filter(Badword.id == badword_id)
     try:
         cur_badword = query[0]
     except IndexError:
         session.close()
         abort(404)
     res = dict()
-    res['id'] =  cur_badword.id
+    res['id'] = cur_badword.id
     res['word'] = cur_badword.word
     res['phrase_id'] = cur_badword.phrase_id
     session.close()
     return jsonify(res)
 
+
 @app.route('/badwords/edit/<int:badword_id>', methods=['POST'])
 @auth.requires_auth
-def edit_badword(badword_id = None):
+def edit_badword(badword_id=None):
     """Edit a badword based on the POST parameters and return a json-encoded
     result."""
     session = db.db_session()
-    query = session.query(Badword).filter(Badword.id==badword_id)
+    query = session.query(Badword).filter(Badword.id == badword_id)
     badword_data = request.form
     try:
         cur_badword = query[0]
@@ -962,7 +1014,7 @@ def edit_badword(badword_id = None):
     res['word'] = badword_data['word']
     try:
         query.update(res)
-        res['id'] =  cur_badword.id
+        res['id'] = cur_badword.id
         res['phrase_id'] = cur_badword.phrase_id
         session.commit()
     except IntegrityError:
@@ -972,12 +1024,13 @@ def edit_badword(badword_id = None):
         session.close()
     return jsonify(res)
 
+
 @app.route('/badwords/delete/<int:badword_id>', methods=['POST'])
 @auth.requires_auth
-def delete_badword(badword_id = None):
+def delete_badword(badword_id=None):
     """Delete a bad word identified by the given id and return the former bad word."""
     session = db.db_session()
-    query = session.query(Badword).filter(Badword.id==badword_id)
+    query = session.query(Badword).filter(Badword.id == badword_id)
     try:
         cur_badword = query[0]
     except IndexError:
@@ -989,14 +1042,15 @@ def delete_badword(badword_id = None):
     session.close()
     return jsonify(word=word)
 
+
 @app.route('/badwords/forphrase/<int:phrase_id>')
 @auth.requires_auth
-def get_badwords_for_phrase(phrase_id = None):
+def get_badwords_for_phrase(phrase_id=None):
     """
     Return the bad words corresponding to a given phrase.
     """
     session = db.db_session()
-    query = session.query(Badword).filter(Badword.phrase_id==phrase_id)
+    query = session.query(Badword).filter(Badword.phrase_id == phrase_id)
     res = dict()
     count = 0
     for cur_badword in query:
@@ -1008,13 +1062,14 @@ def get_badwords_for_phrase(phrase_id = None):
     session.close()
     return jsonify(res)
 
+
 @app.route('/phrases/random/buzzworthy')
 @auth.requires_auth
 def phrases_random_buzzworthy():
     """Return a json-encoded list of buzzworthy phrases. This is going to choke and
     probably die once there is a very large database."""
     session = db.db_session()
-    query = session.query(Phrase).filter(Phrase.buzzworthy==1).order_by(func.random()).limit(1)
+    query = session.query(Phrase).filter(Phrase.buzzworthy == 1).order_by(func.random()).limit(1)
     try:
         cur_phrase = query[0]
     except IndexError:
