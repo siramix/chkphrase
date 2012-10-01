@@ -12,7 +12,7 @@
 <body>
 <div style="width:100%;float:left;">
   <div class="grid-header" style="width:100%">
-    <label>Chkphrase Grid View (All Words and Phrases</label>
+    <label>Chkphrase Grid View (All Words and Phrases)</label>
   </div>
   <div id="myGrid" style="width:100%;height:800px;"></div>
   <div id="pager" style="width:100%;height:20px;"></div>
@@ -28,6 +28,7 @@
 <script src="{{app_root}}/js/slick.core.js"></script>
 <script src="{{app_root}}/js/slick.remotemodel.js"></script>
 <script src="{{app_root}}/js/slick.grid.js"></script>
+<script src="{{app_root}}/js/slick.editors.js"></script>
 
 <script>
   var grid;
@@ -35,23 +36,29 @@
 
   var columns = [
     {id: "phraseid", name: "ID", field: "id", width: 80},
-    {id: "phrase", name: "Phrase", field: "phrase", width: 200},
-    {id: "approved", name: "Approved", field: "approved"},
-    {id: "buzzworthy", name: "Buzzworthy", field: "buzzworthy", width:
-    100},
-    {id: "category", name: "Category", field: "category"},
-    {id: "difficulty", name: "Difficulty", field: "difficulty"},
-    {id: "genre", name: "Genre", field: "genre"},
-    {id: "pack", name: "Pack", field: "pack"},
-    {id: "user", name: "User", field: "user"},
-    {id: "source", name: "Source", field: "source", width: 280}
+    {id: "phrase", name: "Phrase", editor: Slick.Editors.Text, field: "phrase", width: 200},
+    //{id: "approved", name: "Approved", field: "approved"},
+    //{id: "buzzworthy", name: "Buzzworthy", field: "buzzworthy", width:
+    //100},
+    //{id: "category", name: "Category", field: "category"},
+    //{id: "difficulty", name: "Difficulty", field: "difficulty"},
+    //{id: "genre", name: "Genre", field: "genre"},
+    {id: "pack", name: "Pack", editor: Slick.Editors.ChkphraseSelectMaker('pack'), field: "pack"},
+    {id: "user", name: "User", editor: Slick.Editors.ChkphraseSelectMaker('user'), field: "user"},
+    {id: "badword0", name: "Bad Word 0", field: "badword0", width: 100},
+    {id: "badword1", name: "Bad Word 1", field: "badword1", width: 100},
+    {id: "badword2", name: "Bad Word 2", field: "badword2", width: 100},
+    {id: "badword3", name: "Bad Word 3", field: "badword3", width: 100},
+    {id: "badword4", name: "Bad Word 4", field: "badword4", width: 100},
+    //{id: "source", name: "Source", field: "source", width: 280}
   ];
 
   var options = {
-    rowHeight: 20,
-    editable: false,
+    rowHeight: 25,
+    editable: true,
     enableAddRow: false,
-    enableCellNavigation: false
+    enableCellNavigation: true,
+    autoEdit: true
   };
 
   var loadingIndicator = null;
@@ -106,7 +113,19 @@
 
     // load the first page
     grid.onViewportChanged.notify();
-  })
+
+    // editing words
+    grid.onCellChange.subscribe(function(e, args) {
+        console.log(e);
+        console.log(args);
+        if(args.cell === 1) {
+          params = {
+            'phrase' : args.item.phrase,
+          };
+          $.post('{{app_root}}/phrases/edit/' + args.item.id, params);
+        }
+      });
+  });
 </script>
 </body>
 </html>

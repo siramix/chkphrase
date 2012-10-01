@@ -64,8 +64,6 @@
                 from = 0;
             }
 
-            console.log('From: ' + from);
-            console.log('To: ' + to);
             fromPage = Math.floor(from / PAGESIZE);
             toPage = Math.floor(to / PAGESIZE);
 
@@ -82,11 +80,8 @@
                 return;
             }
 
-            console.log(fromPage);
-            console.log(toPage);
-            url = "{{app_root}}/phrases?offset=" + (fromPage * PAGESIZE) +
+            url = "{{app_root}}/phrases/buzzworthy?offset=" + (fromPage * PAGESIZE) +
                 "&count=" + (((toPage - fromPage) * PAGESIZE) + PAGESIZE);
-            console.log(url);
 
             if (h_request !== null) {
                 clearTimeout(h_request);
@@ -115,20 +110,29 @@
                 i,
                 curObj;
             data.length = parseInt(resp.total, 10);
-            console.log(resp);
 
             for (i = 0; i < resp.count; i += 1) {
+                console.log(curObj);
                 curObj = resp[from + i];
                 data[from + i] = {};
-                data[from + i].id = resp[from + i].id;
-                data[from + i].phrase = resp[from + i].phrase;
-                data[from + i].approved = resp[from + i].approved;
-                data[from + i].buzzworthy = resp[from + i].buzzworthy;
+                data[from + i].id = curObj.id;
+                data[from + i].phrase = curObj.phrase;
+                data[from + i].approved = curObj.approved;
+                data[from + i].buzzworthy = curObj.buzzworthy;
 //                data[from + i].category = resp[from + i].catgory.name;
                 if (curObj.hasOwnProperty("difficulty")) {
                     if (curObj.difficulty.hasOwnProperty("name")) {
                         data[from + i].difficulty = curObj.difficulty.name;
-                        console.log('FOOOO');
+                    }
+                }
+                if (curObj.hasOwnProperty("pack")) {
+                    if (curObj.pack.hasOwnProperty("name")) {
+                        data[from + i].pack = curObj.pack.name;
+                    }
+                }
+                if (curObj.hasOwnProperty("user")) {
+                    if (curObj.user.hasOwnProperty("name")) {
+                        data[from + i].user = curObj.user.name;
                     }
                 }
 /*                data[from + i].genre = resp[from + i].genre.name;
@@ -136,6 +140,18 @@
                 data[from + i].user = resp[from + i].user.name; */
                 data[from + i].source = resp[from + i].source;
                 data[from + i].index = from + i;
+                $.ajax({
+                    'url' : '{{app_root}}/badwords/forphrase/' + curObj.id,
+                    'success' : function (badwords) {
+                        var index, cur_word;
+                        for (index in badwords) {
+                            if (badwords.hasOwnProperty(index)) {
+                                data[from + i]['badword'+index] = badwords[index].word;
+                            }
+                        }
+                    },
+                    'async' : false // BAD BAD HACK
+                });
             }
 
             req = null;

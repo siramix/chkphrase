@@ -767,20 +767,23 @@ def phrases_buzzworthy():
     probably die once there is a very large database."""
     session = db.db_session()
     res = dict()
-    query = session.query(Phrase).filter(Phrase.buzzworthy == 1)
-    out = ''
+    offset = 0
+    if 'count' in request.args and 'offset' in request.args:
+        count = int(request.args['count'])
+        offset = int(request.args['offset'])
+        query = session.query(Phrase).filter(Phrase.buzzworthy == 1)[offset:offset + count]
+    else:
+        query = session.query(Phrase).filter(Phrase.buzzworthy == 1)
+
+    counter = 0
     for cur_phrase in query:
         cur_res = _phrase_to_dict(cur_phrase)
-        res[cur_phrase.id] = cur_res
-        if cur_res['difficulty'] != None:
-            out += '{"phrase": "%s", "_id": %d, "difficulty": -1}\n' % (cur_res['phrase'], cur_res['id'])
-        else:
-            out += '{"phrase": "%s", "_id": %d, "difficulty": %d}\n' % (cur_res['phrase'], cur_res['id'], cur_res['difficulty']['id'])
+        res[offset + counter] = cur_res
+        counter += 1
+    res['count'] = counter
+    res['total'] = session.query(Phrase).filter(Phrase.buzzworthy == 1).count()
     session.close()
-    ret = make_response()
-    ret.mimetype = 'application/json'
-    ret.data = out
-    return ret
+    return jsonify(res)
 
 
 @app.route('/phrases/<int:phrase_id>')

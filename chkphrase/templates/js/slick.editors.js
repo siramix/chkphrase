@@ -15,7 +15,8 @@
         "YesNoSelect": YesNoSelectEditor,
         "Checkbox": CheckboxEditor,
         "PercentComplete": PercentCompleteEditor,
-        "LongText": LongTextEditor
+        "LongText": LongTextEditor,
+        "ChkphraseSelectMaker": ChkphraseSelectMaker
       }
     }
   });
@@ -509,4 +510,66 @@
 
     this.init();
   }
+
+function ChkphraseSelectMaker(field) {
+  var cur = function (args) {
+    var $select;
+    var defaultValue;
+    var scope = this;
+    var selectHTML = '';
+    var curIndex;
+
+    this.init = function () {
+      $.getJSON('{{app_root}}/'+field+'s', function (packs) {
+        selectHTML += '<option value="null">None</option>';
+        for (curIndex in packs) {
+          if (packs.hasOwnProperty(curIndex)) {
+            curId = packs[curIndex].id;
+            curName = packs[curIndex].name;
+            selectHTML += '<option value="' + curId + '">' + curName + '</option>';
+          }
+        }
+        $select = $("<SELECT tabIndex='0' class='editor-yesno'>" + selectHTML + "</SELECT>");
+        $select.appendTo(args.container);
+        $select.focus();
+      });
+    };
+
+    this.destroy = function () {
+      $select.remove();
+    };
+
+    this.focus = function () {
+      $select.focus();
+    };
+
+    this.loadValue = function (item) {
+      $select.val((defaultValue = item[args.column.field]) ? "yes" : "no");
+      $select.select();
+    };
+
+    this.serializeValue = function () {
+      return ($select.val() == "yes");
+    };
+
+    this.applyValue = function (item, state) {
+      item[args.column.field] = state;
+    };
+
+    this.isValueChanged = function () {
+      return ($select.val() != defaultValue);
+    };
+
+    this.validate = function () {
+      return {
+        valid: true,
+        msg: null
+      };
+    };
+
+    this.init();
+  };
+  return cur;
+}
+
 })(jQuery);
